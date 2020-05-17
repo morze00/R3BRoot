@@ -48,7 +48,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 #Generating JSON library in the build directory
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
-
 Set(CheckSrcDir "${FAIRROOTPATH}/share/fairbase/cmake/checks")
 
 # set cmake policies
