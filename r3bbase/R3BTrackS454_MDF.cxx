@@ -11,15 +11,16 @@
  * or submit itself to any jurisdiction.                                      *
  ******************************************************************************/
 
-// ------------------------------------------------------------
-// -----                  R3BTrackS454_MDF                -----
-// -----          Created April 13th 2016 by M.Heil       -----
-// ------------------------------------------------------------
+// --------------------------------------------------
+// -----        R3BTrackS454_MDF                -----
+// -----        Created 23-05-2020 by V.Panin   -----
+// -----        Implementation of MDF tracking  -----
+// -----        for S454 experiemnt             -----
+// ---------------------------------------------------
 
 /*
  * This task should fill histograms with detector variables which allow
  * to test the detectors online
- *
  */
 
 #include "R3BCalifaMappedData.h"
@@ -97,9 +98,9 @@ R3BTrackS454_MDF::R3BTrackS454_MDF(const char* name, Int_t iVerbose)
     , fPairs(0)
     , fB(-1672)
     , fSimu(0)
-    , fNEvents(0)
+      , fNEvents(0)
     , fTrackItems(new TClonesArray("R3BTrack"))
-    , fNofTrackItems()
+      , fNofTrackItems()
 {
 }
 
@@ -383,7 +384,7 @@ InitStatus R3BTrackS454_MDF::Init()
             fh_xy_Fib[ifibcount]->GetYaxis()->SetTitle("y / cm");
 
             fh_xy_Fib_ac[ifibcount] = new TH2F(
-                Form("%s_xy_ac", detName), Form("%s xy after cuts", detName), 600, -30., 30., 200, -100., 100.);
+                    Form("%s_xy_ac", detName), Form("%s xy after cuts", detName), 600, -30., 30., 200, -100., 100.);
             fh_xy_Fib_ac[ifibcount]->GetXaxis()->SetTitle("x / cm ");
             fh_xy_Fib_ac[ifibcount]->GetYaxis()->SetTitle("y / cm");
 
@@ -404,30 +405,30 @@ InitStatus R3BTrackS454_MDF::Init()
             fh_ToT_Fib[ifibcount]->GetYaxis()->SetTitle("ToT / ns");
 
             fh_ToT_Fib_ac[ifibcount] = new TH2F(Form("%s_tot_m_ac", detName),
-                                                Form("%s ToT of MAPMT after cuts", detName),
-                                                600,
-                                                -30.,
-                                                30,
-                                                400,
-                                                0.,
-                                                400.);
+                    Form("%s ToT of MAPMT after cuts", detName),
+                    600,
+                    -30.,
+                    30,
+                    400,
+                    0.,
+                    400.);
             fh_ToT_Fib_ac[ifibcount]->GetXaxis()->SetTitle("Fiber x / cm");
             fh_ToT_Fib_ac[ifibcount]->GetYaxis()->SetTitle("ToT / ns");
 
             // ToF Tofd -> Fiber:
             fh_Fib_ToF[ifibcount] = new TH2F(
-                Form("%s_tof", detName), Form("%s ToF Tofd to Fiber", detName), 600, -30., 30, 10000, -1100., 1100.);
+                    Form("%s_tof", detName), Form("%s ToF Tofd to Fiber", detName), 600, -30., 30, 10000, -1100., 1100.);
             fh_Fib_ToF[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
             fh_Fib_ToF[ifibcount]->GetXaxis()->SetTitle("x / cm");
 
             fh_Fib_ToF_ac[ifibcount] = new TH2F(Form("%s_tof_ac", detName),
-                                                Form("%s ToF Tofd to Fiber after cuts", detName),
-                                                600,
-                                                -30.,
-                                                30,
-                                                10000,
-                                                -1000.,
-                                                1000.);
+                    Form("%s ToF Tofd to Fiber after cuts", detName),
+                    600,
+                    -30.,
+                    30,
+                    10000,
+                    -1000.,
+                    1000.);
             fh_Fib_ToF_ac[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
             fh_Fib_ToF_ac[ifibcount]->GetXaxis()->SetTitle("x / cm");
 
@@ -438,76 +439,76 @@ InitStatus R3BTrackS454_MDF::Init()
             fh_Fib_Time[ifibcount]->GetXaxis()->SetTitle("x / cm");
 
             fh_Fib_Time_ac[ifibcount] = new TH2F(
-                Form("%s_time_ac", detName), Form("%s Time after cuts", detName), 600, -30., 30, 4000, -4000., 4000.);
+                    Form("%s_time_ac", detName), Form("%s Time after cuts", detName), 600, -30., 30, 4000, -4000., 4000.);
             fh_Fib_Time_ac[ifibcount]->GetYaxis()->SetTitle("Time / ns");
             fh_Fib_Time_ac[ifibcount]->GetXaxis()->SetTitle("x / cm");
 
             // ToF Tofd -> Fiber vs. event number:
             fh_ToF_vs_Events[ifibcount] = new TH2F(Form("%s_tof_vs_events", detName),
-                                                   Form("%s ToF Tofd to Fiber vs event number", detName),
-                                                   10000,
-                                                   0,
-                                                   Nmax,
-                                                   2200,
-                                                   -5100,
-                                                   5100);
+                    Form("%s ToF Tofd to Fiber vs event number", detName),
+                    10000,
+                    0,
+                    Nmax,
+                    2200,
+                    -5100,
+                    5100);
             fh_ToF_vs_Events[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
             fh_ToF_vs_Events[ifibcount]->GetXaxis()->SetTitle("event number");
 
             fh_ToF_vs_Events_ac[ifibcount] = new TH2F(Form("%s_tof_vs_events_ac", detName),
-                                                      Form("%s ToF Tofd to Fiber vs event number after cuts", detName),
-                                                      10000,
-                                                      0,
-                                                      Nmax,
-                                                      2200,
-                                                      -5100,
-                                                      5100);
+                    Form("%s ToF Tofd to Fiber vs event number after cuts", detName),
+                    10000,
+                    0,
+                    Nmax,
+                    2200,
+                    -5100,
+                    5100);
             fh_ToF_vs_Events_ac[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
             fh_ToF_vs_Events_ac[ifibcount]->GetXaxis()->SetTitle("event number");
 
             // hit fiber number vs. event number:
             fh_Fib_vs_Events[ifibcount] = new TH2F(Form("%s_fib_vs_event", detName),
-                                                   Form("%s Fiber # vs. Event #", detName),
-                                                   10000,
-                                                   0,
-                                                   Nmax,
-                                                   600,
-                                                   -30.,
-                                                   30.);
+                    Form("%s Fiber # vs. Event #", detName),
+                    10000,
+                    0,
+                    Nmax,
+                    600,
+                    -30.,
+                    30.);
             fh_Fib_vs_Events[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
             fh_Fib_vs_Events[ifibcount]->GetXaxis()->SetTitle("Event number");
 
             fh_Fib_vs_Events_ac[ifibcount] = new TH2F(Form("%s_fib_vs_event_ac", detName),
-                                                      Form("%s Fiber # vs. Event # after cuts", detName),
-                                                      10000,
-                                                      0,
-                                                      Nmax,
-                                                      600,
-                                                      -30.,
-                                                      30.);
+                    Form("%s Fiber # vs. Event # after cuts", detName),
+                    10000,
+                    0,
+                    Nmax,
+                    600,
+                    -30.,
+                    30.);
             fh_Fib_vs_Events_ac[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
             fh_Fib_vs_Events_ac[ifibcount]->GetXaxis()->SetTitle("Event number");
 
             // hit fiber number vs. TofD position:
             fh_Fibs_vs_Tofd[ifibcount] = new TH2F(Form("%s_fib_vs_TofdX", detName),
-                                                  Form("%s Fiber # vs. Tofd x-pos", detName),
-                                                  200,
-                                                  -100,
-                                                  100,
-                                                  200,
-                                                  -100.,
-                                                  100.);
+                    Form("%s Fiber # vs. Tofd x-pos", detName),
+                    200,
+                    -100,
+                    100,
+                    200,
+                    -100.,
+                    100.);
             fh_Fibs_vs_Tofd[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
             fh_Fibs_vs_Tofd[ifibcount]->GetXaxis()->SetTitle("Tofd x / cm");
 
             fh_Fibs_vs_Tofd_ac[ifibcount] = new TH2F(Form("%s_fib_vs_TofdX_ac", detName),
-                                                     Form("%s Fiber # vs. Tofd x-pos after cuts", detName),
-                                                     200,
-                                                     -100,
-                                                     100,
-                                                     200,
-                                                     -100.,
-                                                     100.);
+                    Form("%s Fiber # vs. Tofd x-pos after cuts", detName),
+                    200,
+                    -100,
+                    100,
+                    200,
+                    -100.,
+                    100.);
             fh_Fibs_vs_Tofd_ac[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
             fh_Fibs_vs_Tofd_ac[ifibcount]->GetXaxis()->SetTitle("Tofd x / cm");
 
@@ -691,9 +692,9 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 {
     if (fNEvents / 10000. == (int)fNEvents / 10000)
         std::cout << "\rEvents: " << fNEvents << " / " << maxevent << " (" << (int)(fNEvents * 100. / maxevent)
-                  << " %) "
-                  << " Tofd: " << counterTofd << " tracked: " << counter2 << " chix: " << counter3
-                  << " chiy: " << counter4 << std::flush;
+            << " %) "
+            << " Tofd: " << counterTofd << " tracked: " << counter2 << " chix: " << counter3
+            << " chiy: " << counter4 << std::flush;
     fNEvents += 1;
 
     // ofstream myfile;
@@ -796,11 +797,11 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             }
 
             /*
-            cout << "time " << time << endl;
-            cout << "IC   " << IC << "  " << counts_IC << "  " << endl;
-            cout << "SEE  " << SEETRAM_raw << "  " << counts_SEE << "  " << SEETRAM << endl;
-            cout << "TofD " << TOFDOR << "  " << counts_TofD << "  " << endl;
-            */
+               cout << "time " << time << endl;
+               cout << "IC   " << IC << "  " << counts_IC << "  " << endl;
+               cout << "SEE  " << SEETRAM_raw << "  " << counts_SEE << "  " << SEETRAM << endl;
+               cout << "TofD " << TOFDOR << "  " << counts_TofD << "  " << endl;
+               */
 
             // IC:
             Int_t yIC = IC - ic_start;
@@ -904,7 +905,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
                     LOG(DEBUG) << "******************************************" << endl;
                     LOG(DEBUG) << "Track In 4He"
-                               << "x " << XHes << " y " << YHes << " z " << ZHes << endl;
+                        << "x " << XHes << " y " << YHes << " z " << ZHes << endl;
                     LOG(DEBUG) << "px " << pHexs << " py " << pHeys << " z " << pHezs << endl;
                 }
                 if (PID == 1000060120)
@@ -922,7 +923,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
                     LOG(DEBUG) << "******************************************" << endl;
                     LOG(DEBUG) << "Track In 12C"
-                               << "x " << XCs << " y " << YCs << " z " << ZCs << endl;
+                        << "x " << XCs << " y " << YCs << " z " << ZCs << endl;
                     LOG(DEBUG) << "px " << pCxs << " py " << pCys << " z " << pCzs << endl;
                 }
                 if (PID == 1000080160)
@@ -939,7 +940,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
                     LOG(DEBUG) << "******************************************" << endl;
                     LOG(DEBUG) << "Track In 16O"
-                               << "x " << Xf << " y " << Yf << " z " << Zf << endl;
+                        << "x " << Xf << " y " << Yf << " z " << Zf << endl;
                     LOG(DEBUG) << "px " << Pxf << " py " << Pyf << " z " << Pzf << endl;
                 }
             }
@@ -1101,10 +1102,10 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         if (IS_NAN(hitTofd->GetTime()))
             continue;
         /*
-                cout << "Hit " << ihit << " of " << nHits << endl;
-                cout << "charge " << hitTofd->GetEloss() <<
-                        " time " << hitTofd->GetTime() << endl;
-        */
+           cout << "Hit " << ihit << " of " << nHits << endl;
+           cout << "charge " << hitTofd->GetEloss() <<
+           " time " << hitTofd->GetTime() << endl;
+           */
         Double_t ttt = hitTofd->GetTime();
         fh_tofd_time->Fill(ttt);
         if (fCuts && (ttt < -400. || ttt > -250.) && !fSimu) // trigger window -1500, 1500
@@ -1249,12 +1250,12 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         fh_tofd_time_ac->Fill(t2[det2]);
 
         /*
-                cout << "ihit: " << ihit << endl;
-                cout << "ToFD Hit"
-                            << " x: " << x2[det2] << " y: " << y2[det2] << " q: " << q2[det2] << " t: " << t2[det2] << "
+           cout << "ihit: " << ihit << endl;
+           cout << "ToFD Hit"
+           << " x: " << x2[det2] << " y: " << y2[det2] << " q: " << q2[det2] << " t: " << t2[det2] << "
            ID "
-                            << id2 << endl;
-        */
+           << id2 << endl;
+           */
 
         // register hits for tracker as long a time is in the coincidence window
         if ((abs(t2[det2] - t1[det1]) < 2.) || first)
@@ -1275,12 +1276,12 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             first = false;
             tStart = t2[det2];
             /*
-                        cout << "alpha: " << alpha << " carbon: " << carbon << endl;
-                        cout << "registered"
-                                    << " x: " << x2[det2] << " y: " << y2[det2] << " q: " << q2[det2] << " t: " <<
+               cout << "alpha: " << alpha << " carbon: " << carbon << endl;
+               cout << "registered"
+               << " x: " << x2[det2] << " y: " << y2[det2] << " q: " << q2[det2] << " t: " <<
                t2[det2]
-                                    << " ID " << id2 << endl;
-            */
+               << " ID " << id2 << endl;
+               */
             det1 = det2;
             x1[det1] = x2[det2];
             y1[det1] = y2[det2];
@@ -1361,7 +1362,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi13 bc: " << ihit13 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << t1[det] << endl;
+                << " t1: " << t1[det] << endl;
 
             // Cuts on Fi13
             //            if (fCuts && x1[det] * 100. < -24.5)
@@ -1399,7 +1400,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time_ac[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi13: " << ihit13 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << t1[det] << endl;
+                << " t1: " << t1[det] << endl;
             if (!maxWerte)
             {
                 detector[countdet] = det;
@@ -1456,7 +1457,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi11 bc: " << ihit11 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << t1[det] << endl;
+                << " t1: " << t1[det] << endl;
 
             // Cuts on Fi11
             //            if (fCuts && x1[det] * 100. <- 24.4)
@@ -1492,7 +1493,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time_ac[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi11: " << ihit11 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << t1[det] << endl;
+                << " t1: " << t1[det] << endl;
 
             if (!maxWerte)
             {
@@ -1583,7 +1584,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time_ac[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi10: " << ihit10 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << t1[det] << endl;
+                << " t1: " << t1[det] << endl;
 
             if (!maxWerte)
             {
@@ -1674,7 +1675,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time_ac[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi12: " << ihit12 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << t1[det] << endl;
+                << " t1: " << t1[det] << endl;
 
             if (!maxWerte)
             {
@@ -1766,7 +1767,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time_ac[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi3a " << ihit3a << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << tof << endl;
+                << " t1: " << tof << endl;
 
             if (!maxWerte)
             {
@@ -1859,7 +1860,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             fh_Fib_Time_ac[det]->Fill(x1[det] * 100., t1[det]);
 
             LOG(DEBUG2) << "Fi3b " << ihit3b << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-                        << " t1: " << tof << endl;
+                << " t1: " << tof << endl;
 
             if (!maxWerte)
             {
@@ -1922,12 +1923,12 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         if (tracker)
         {
             /*
-                        if (mult3a > 20 || mult3b > 20 || mult10 > 20 || mult11 > 20 ||
-                            mult12 >20 || mult13 > 20) {
-                            cout << "Too many hits!!!!!!!!!!!!!!!!!!!!" << endl;
-                            continue;
-                        }
-            */
+               if (mult3a > 20 || mult3b > 20 || mult10 > 20 || mult11 > 20 ||
+               mult12 >20 || mult13 > 20) {
+               cout << "Too many hits!!!!!!!!!!!!!!!!!!!!" << endl;
+               continue;
+               }
+               */
             Double_t test[9];
 
             // cout << "# of points" << countdet << endl;
@@ -1940,22 +1941,22 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             for (Int_t i = 0; i < ndet; i++)
             {
                 LOG(DEBUG2) << "Max Det: " << i << " max x: " << xMax[i] << " max y: " << yMax[i]
-                            << " max q: " << qMax[i] << endl;
+                    << " max q: " << qMax[i] << endl;
             }
 
             /*
-                            if (counter1 < 200000 && ((mult10 > 0 && mult12 > 0) || (mult11 > 0 && mult13 > 0)))
-                            {
-                                counter1++;
-                                cout << "Counter: " << counter1 << endl;
-                                myfile << countdet << "  \n";
-                                for (Int_t i = 0; i < countdet; i++)
-                                {
+               if (counter1 < 200000 && ((mult10 > 0 && mult12 > 0) || (mult11 > 0 && mult13 > 0)))
+               {
+               counter1++;
+               cout << "Counter: " << counter1 << endl;
+               myfile << countdet << "  \n";
+               for (Int_t i = 0; i < countdet; i++)
+               {
 
-                                    myfile << detector[i] << "    " << xdet[i] << "    " << ydet[i] << " \n";
-                                }
-                            }
-            */
+               myfile << detector[i] << "    " << xdet[i] << "    " << ydet[i] << " \n";
+               }
+               }
+               */
             Bool_t det_coord = true;
             if (fPairs)
             {
@@ -1965,7 +1966,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                 //    &max, &countdet, &det_coord, &st, target, detector, qdet, xdet, ydet, zdet, track, chi);
 
                 //multi_track_extended_output_from_cpp_(
-                 //   &max, &countdet, &det_coord, &st, target, detector, qdet, xdet, ydet, zdet, track, chi, pat1, pat2);
+                //   &max, &countdet, &det_coord, &st, target, detector, qdet, xdet, ydet, zdet, track, chi, pat1, pat2);
 
                 chi2 = chi[4] + chi[5];
                 fh_chiy_vs_chix->Fill(chi[0], chi[1]);
@@ -2019,7 +2020,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                         fh_xy[detector[i]]->Fill(xdet[i] * 100., ydet[i] * 100.);
                         fh_p_vs_x[detector[i]]->Fill(xdet[i] * 100., track[5]);
                         fh_p_vs_x_test[detector[i]]->Fill(
-                            xdet[i] * 100., sqrt(track[3] * track[3] + track[4] * track[4] + track[5] * track[5]));
+                                xdet[i] * 100., sqrt(track[3] * track[3] + track[4] * track[4] + track[5] * track[5]));
                     }
                 }
                 // Plots of correlations of Fiber detectors
@@ -2072,7 +2073,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                     LOG(DEBUG) << "track1: " << track[0] << "  " << track[1] << "  " << track[2] << endl;
                     LOG(DEBUG) << "track1: " << track[3] << "  " << track[4] << "  " << track[5] << endl;
                     LOG(DEBUG) << "chi: " << chi[0] << "  " << chi[1] << "  " << chi[2] << "  " << chi[3] << "  "
-                               << chi[4] << "  " << chi[5] << endl;
+                        << chi[4] << "  " << chi[5] << endl;
 
                     // we have a hit
                     for (Int_t i = 0; i < ndet; i++)
@@ -2088,7 +2089,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                     {
 
                         LOG(DEBUG2) << "back #" << i << " Det: " << detector[i] << " x: " << xdet[i]
-                                    << " y: " << ydet[i] << " q: " << qdet[i] << endl;
+                            << " y: " << ydet[i] << " q: " << qdet[i] << endl;
                         xTrack[detector[i]] = xdet[i];
                         yTrack[detector[i]] = ydet[i];
                         zTrack[detector[i]] = zdet[i];
@@ -2102,7 +2103,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                         fh_xy[i]->Fill(xTrack[i] * 100., yTrack[i] * 100.);
                         fh_p_vs_x[i]->Fill(xTrack[i] * 100., track[5]);
                         fh_p_vs_x_test[i]->Fill(xTrack[i] * 100.,
-                                                sqrt(track[3] * track[3] + track[4] * track[4] + track[5] * track[5]));
+                                sqrt(track[3] * track[3] + track[4] * track[4] + track[5] * track[5]));
                     }
                     // Plots of correlations of Fiber detectors
 
@@ -2117,7 +2118,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
                     // store hits in track level
                     new ((*fTrackItems)[fNofTrackItems++]) R3BTrack(
-                        track[0], track[1], track[2], track[3], track[4], track[5], charge, 2, chi[0], chi[1], 0);
+                            track[0], track[1], track[2], track[3], track[4], track[5], charge, 2, chi[0], chi[1], 0);
                 }
             }
             // for (int i = 0; i < 2 * n_det; i++)	{
@@ -2146,12 +2147,12 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             Double_t eCs = sqrt(pow(pCs, 2) + pow(mC, 2)) - mC;
 
             Double_t Erelas = sqrt(pow((mHe + mC + eHes + eCs), 2) - pow(pHes, 2) - pow(pCs, 2) -
-                                   2 * pHes * pCs * cos(theta_26s * 3.1415 / 180.)) -
-                              (mHe + mC); // Erel
+                    2 * pHes * pCs * cos(theta_26s * 3.1415 / 180.)) -
+                (mHe + mC); // Erel
 
             Double_t m_invs =
                 sqrt(mHe * mHe + mC * mC + 2. * sqrt(pCs * pCs + mC * mC) * sqrt(pHes * pHes + mHe * mHe) -
-                     2. * pHes * pCs * cos(theta_26s * 3.1415 / 180.));
+                        2. * pHes * pCs * cos(theta_26s * 3.1415 / 180.));
             Double_t Erelbs = m_invs - mHe - mC;
 
             fh_Erel_simu->Fill(Erelbs);
@@ -2198,7 +2199,7 @@ void R3BTrackS454_MDF::Output1(Double_t track[12], Double_t chi[6])
         return;
 
     Double_t costh26 = (pHex * pCx + pHey * pCy + pHez * pCz) /
-                       (sqrt(pHex * pHex + pHey * pHey + pHez * pHez) * sqrt(pCx * pCx + pCy * pCy + pCz * pCz));
+        (sqrt(pHex * pHex + pHey * pHey + pHez * pHez) * sqrt(pCx * pCx + pCy * pCy + pCz * pCz));
 
     Double_t theta_26 = acos(costh26) * 180. / 3.14159; // opening angle
 
@@ -2217,7 +2218,7 @@ void R3BTrackS454_MDF::Output1(Double_t track[12], Double_t chi[6])
         (mHe + mC); // Erel
 
     Double_t m_inv = sqrt(mHe * mHe + mC * mC + 2. * sqrt(pC * pC + mC * mC) * sqrt(pHe * pHe + mHe * mHe) -
-                          2. * pHe * pC * cos(theta_26 * 3.1415 / 180.));
+            2. * pHe * pC * cos(theta_26 * 3.1415 / 180.));
     Double_t Erelb = m_inv - mHe - mC;
 
     fh_Erel->Fill(Erelb);
@@ -2233,10 +2234,10 @@ void R3BTrackS454_MDF::Output2(Double_t track_parameter[12], Double_t chi_single
     LOG(DEBUG) << "******************************************" << endl;
     LOG(DEBUG) << "chi_sqingle_parameter " << chi_single_parameter[0] << "  " << chi_single_parameter[1] << endl;
     LOG(DEBUG) << "xyz: " << track_parameter[0] * 100. << "  " << track_parameter[1] * 100. << "  "
-               << track_parameter[2] * 100. << endl;
+        << track_parameter[2] * 100. << endl;
     LOG(DEBUG) << "p: " << track_parameter[3] << "  " << track_parameter[4] << "  " << track_parameter[5] << endl;
     Double_t p_tot = sqrt(track_parameter[3] * track_parameter[3] + track_parameter[4] * track_parameter[4] +
-                          track_parameter[5] * track_parameter[5]);
+            track_parameter[5] * track_parameter[5]);
 
     fh_target_xy->Fill(track_parameter[0] * 100., track_parameter[1] * 100.);
     fh_target_px->Fill(track_parameter[3]);
