@@ -24,6 +24,7 @@
 #pragma link C++ class R3BFragmentTracker+;
 #pragma link C++ class R3BFragmentFitterGeneric+;
 #pragma link C++ class R3BFragmentFitterChi2+;
+#pragma link C++ class R3BMDFWrapper+;
 #pragma link C++ class R3BTrackingDetector+;
 #pragma link C++ class R3BTrackingParticle+;
 #pragma link C++ class R3BTrackingSetup+;

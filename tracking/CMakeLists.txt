@@ -47,6 +47,7 @@ R3BTGeoPar.cxx
 R3BFragmentTracker.cxx
 R3BFragmentFitterGeneric.cxx
 R3BFragmentFitterChi2.cxx
+R3BMDFWrapper.cxx
 R3BTrackingDetector.cxx
 R3BTrackingParticle.cxx
 R3BTrackingSetup.cxx
