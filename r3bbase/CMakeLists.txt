@@ -49,6 +49,7 @@ ${R3BROOT_SOURCE_DIR}/fiber
 ${R3BROOT_SOURCE_DIR}/r3bdata
 ${R3BROOT_SOURCE_DIR}/r3bdata/sampData
 ${R3BROOT_SOURCE_DIR}/tracker_rene
+${R3BROOT_SOURCE_DIR}/tracking
 )
 
 include_directories( ${INCLUDE_DIRECTORIES})
@@ -75,7 +76,7 @@ CHANGE_FILE_EXTENSION(*.cxx *.h HEADERS "${SRCS}")
 Set(LINKDEF R3BLinkDef.h)
 
 Set(DEPENDENCIES
-    GeoBase ParBase MbsAPI Base FairTools R3BData Core Geom GenVector Physics Matrix MathCore R3BTraRene)
+    GeoBase ParBase MbsAPI Base FairTools R3BData Core Geom GenVector Physics Matrix MathCore R3BTraRene R3BTracking)
 
 Set(LIBRARY_NAME R3Bbase)
 
