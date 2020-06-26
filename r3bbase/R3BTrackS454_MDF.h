@@ -99,6 +99,9 @@ class R3BTrackS454_MDF : public FairTask
 
     virtual void Output1(Double_t tracker[6], Double_t chi2[2]);
     virtual void Output2(Double_t tracker[6], Double_t chi2[2]);
+    
+    //Main tracking function
+    void TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t * xd, Double_t * yd, Double_t * zd);
 
     /**
      * Method for setting the trigger value.
@@ -245,7 +248,11 @@ class R3BTrackS454_MDF : public FairTask
     UInt_t num_spills = 0;
 
 	Int_t ndet = 10;
-	
+
+
+
+
+
     TH1F* fh_Tpat;
     TH1F* fh_Trigger;
     TH1F* fh_IC;
@@ -349,8 +356,29 @@ class R3BTrackS454_MDF : public FairTask
     TH2F* fh_p_vs_x[10];
     TH2F* fh_p_vs_x_test[10];
 
+    //Define what is needed for MDF tracking
+
     R3BMDFWrapper * MDF_X0;
 
+  public:
+
+    struct Detector_Hit
+    {
+        Double_t X;
+        Double_t Y;
+        Double_t Z;
+        Int_t Q;
+        Int_t Detector;
+        void Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Int_t q, Int_t _det);
+    };
+
+    std::vector<Detector_Hit> f3a_hits;
+    std::vector<Detector_Hit> f3b_hits;
+    std::vector<Detector_Hit> f10_hits;
+    std::vector<Detector_Hit> f11_hits;
+    std::vector<Detector_Hit> f12_hits;
+    std::vector<Detector_Hit> f13_hits;
+    std::vector<Detector_Hit> dtof_hits;
 
   public:
     ClassDef(R3BTrackS454_MDF, 1)
