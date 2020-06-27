@@ -372,6 +372,13 @@ class R3BTrackS454_MDF : public FairTask
         void Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Int_t q, Int_t _det);
     };
 
+    struct MDF_Data_X0 //TX0, X1, Z1, TX1
+    {
+        Double_t edata[4];
+        Double_t pdata[4];
+        Double_t value;
+    };
+
     std::vector<Detector_Hit> f3a_hits;
     std::vector<Detector_Hit> f3b_hits;
     std::vector<Detector_Hit> f10_hits;
@@ -379,6 +386,8 @@ class R3BTrackS454_MDF : public FairTask
     std::vector<Detector_Hit> f12_hits;
     std::vector<Detector_Hit> f13_hits;
     std::vector<Detector_Hit> dtof_hits;
+
+    std::vector<MDF_Data_X0> X0_data;
 
   public:
     ClassDef(R3BTrackS454_MDF, 1)

@@ -880,6 +880,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
     Double_t xdet[max];
     Double_t ydet[max];
     Double_t zdet[max];
+    Double_t tdet[max];
     Int_t qdet[max];
 
     countdet = 0;
@@ -1150,7 +1151,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         fh_tofd_time_ac->Fill(t2[det2]);
 
         // register hits for tracker as long a time is in the coincidence window
-        if ((abs(t2[det2] - t1[det1]) < 2.) || first)
+        if ((fabs(t2[det2] - t1[det1]) < 2.) || first)
         {
             // register point for tracker
             detector[countdet] = det2;
@@ -1158,9 +1159,9 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             ydet[countdet] = y2[det2];
             zdet[countdet] = z2[det2];
             qdet[countdet] = (int)(q2[det2] + 0.5);
-            if (abs(qdet[countdet] - 2.) < 0.5)
+            if (fabs(qdet[countdet] - 2.) < 0.5)
                 alpha = true;
-            if (abs(qdet[countdet] - 6.) < 0.5)
+            if (fabs(qdet[countdet] - 6.) < 0.5)
                 carbon = true;
             countdet++;
             single = true;
@@ -1290,7 +1291,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x1[det];
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
-            qdet[countdet] = 0;
+            qdet[countdet] = q1[det];
             countdet++;
         }
     }
@@ -1355,7 +1356,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x1[det];
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
-            qdet[countdet] = 0;
+            qdet[countdet] = q1[det];
             countdet++;
         }
     }
@@ -1417,7 +1418,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x1[det];
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
-            qdet[countdet] = 0;
+            qdet[countdet] = q1[det];
             countdet++;
         }
     }
@@ -1479,7 +1480,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x1[det];
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
-            qdet[countdet] = 0;
+            qdet[countdet] = q1[det];
             countdet++;
         }
     }
@@ -1542,7 +1543,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x1[det];
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
-            qdet[countdet] = 0;
+            qdet[countdet] = q1[det];
             countdet++;
         }
     }
@@ -1606,7 +1607,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x1[det];
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
-            qdet[countdet] = 0;
+            qdet[countdet] = q1[det];
             countdet++;
         }
     }
@@ -1619,35 +1620,61 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
     if (tracker)
     {
         Double_t test[9];
+        
+        TrackMDF(countdet, detector, qdet, xdet, ydet, zdet);
 
-        for (Int_t i = 0; i < ndet; i++)
-        {
-            LOG(DEBUG2) << "Max Det: " << i << " max x: " << xMax[i] << " max y: " << yMax[i]
-                << " max q: " << qMax[i] << endl;
-        }
+
+        //for (Int_t i = 0; i < ndet; i++)
+        //{
+        //    LOG(DEBUG2) << "Max Det: " << i << " max x: " << xMax[i] << " max y: " << yMax[i]
+        //        << " max q: " << qMax[i] << endl;
+        //}
+
+        //for (Int_t i = 0; i < countdet; i++)
+        //{
+        //    LOG(DEBUG2) << "Det: " << detector[i] << " x: " << xMax[i] << " max y: " << yMax[i]
+        //        << " max q: " << qMax[i] << endl;
+        //}
 
         Bool_t det_coord = true;
 
         Bool_t st = false;
 
-        TrackMDF(countdet, detector, qdet, zdet, ydet, zdet);
+        //cout << "\n\nNew event ******************************" << endl;
+        //cout << "\ncountdet = " << countdet;
+        //cout << "\n\nNhits in fi3a " << f3a_hits.size();
+        //cout << "\nNhits in fi3b " << f3b_hits.size();
+        //cout << "\nNhits in fi10 " << f10_hits.size();
+        //cout << "\nNhits in fi11 " << f11_hits.size();
+        //cout << "\nNhits in fi12 " << f12_hits.size();
+        //cout << "\nNhits in fi13 " << f13_hits.size();
+        //cout << "\nNhits in dTof " << dtof_hits.size();
+        //    
+        //cout << "\n\ndTof hits:";
+        //for(auto & _hit : dtof_hits)
+        //{
+        //    cout << "\ndTof.X = " << _hit.X <<  "\tdTof.Y = " << _hit.Y
+        //        << "\tdTof.Z = " << _hit.Z << "\tdTof.Q = " << _hit.Q 
+        //        << "\tdTof.Det = " << _hit.Detector; 
+        //}
 
-        cout << "\n\nNew event ******************************" << endl;
-        cout << "\ncountdet = " << countdet;
-        cout << "\n\nNhits in fi3a " << f3a_hits.size();
-        cout << "\nNhits in fi3b " << f3b_hits.size();
-        cout << "\nNhits in fi10 " << f10_hits.size();
-        cout << "\nNhits in fi11 " << f11_hits.size();
-        cout << "\nNhits in fi12 " << f12_hits.size();
-        cout << "\nNhits in fi13 " << f13_hits.size();
-        cout << "\nNhits in dTof " << dtof_hits.size();
+        //cout << "\n\nf10 hits:";
+        //for(auto & _hit : f10_hits)
+        //{
+        //    cout << "\nf10.X = " << _hit.X <<  "\tf10.Y = " << _hit.Y
+        //        << "\tf10.Z = " << _hit.Z << "\tf10.Q = " << _hit.Q 
+        //        << "\tf10.Det = " << _hit.Detector; 
+        //}
 
-        for(auto & _hit : dtof_hits)
-        {
-            cout << "\ndTof.X = " << _hit.X <<  "\tdTof.Y = " << _hit.Y
-                << "\tdTof.Z = " << _hit.Z << "\tdTof.Q = " << _hit.Q 
-                << "\tdTof.Det = " << _hit.Detector; 
-        }
+        //cout << "\n\nf12 hits:";
+        //for(auto & _hit : f12_hits)
+        //{
+        //    cout << "\nf12.X = " << _hit.X <<  "\tf12.Y = " << _hit.Y
+        //        << "\tf12.Z = " << _hit.Z << "\tf12.Q = " << _hit.Q 
+        //        << "\tf12.Det = " << _hit.Detector; 
+        //}
+
+
 
 
         chi2 = chi[0] + chi[1];
@@ -1971,7 +1998,7 @@ void R3BTrackS454_MDF::Detector_Hit::Set_XYZQ(Double_t _x, Double_t _y, Double_t
 
 void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t * xd, Double_t * yd, Double_t * zd)
 {
-    //Make sure that hit containers are cleared
+    //Make sure that hit containers are empty
     f3a_hits.clear();
     f3b_hits.clear();
     f10_hits.clear();
@@ -1980,56 +2007,115 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
     f13_hits.clear();
     dtof_hits.clear();
 
-    Detector_Hit det_hit;
+    //MDF vectors
+    X0_data.clear();
 
-    //At first convert each detector hit to the lab coordinate
+    Detector_Hit det_hit;
+    MDF_Data_X0 X0;
+
+    double Angle = 17.7 * TMath::Pi()/180.;//Central turning angle from Daniel
+    double Z0 = 277.7; //cm from target middle to the central turning point in GLAD
+    double f3ab_halfwidth =  0.021*256;//210 um pitch
+    double fib_halfwidth =  512.*0.05;//500um pitch
+
+    //At first convert each detector hit to the lab coordinates (in cm as r3broot)
     for(int i=0; i<detcount; i++)
     {
         if(det[i] == 0) //fi3a
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(
+                    xd[i]*(-100.) - 0.25 -  f3ab_halfwidth,// 5 mm slit, flipped
+                    yd[i],
+                    zd[i]+80.5,
+                    qd[i], det[i]);
+
             f3a_hits.push_back(det_hit);
         }
 
         else if(det[i] == 1) //fi3b
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(
+                    xd[i]*100. + 0.25 + f3ab_halfwidth, //5mm slit
+                    yd[i],
+                    zd[i]+80.5,
+                    qd[i], det[i]);
+
             f3b_hits.push_back(det_hit);
         }
 
         else if(det[i] == 2) //fi10
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(
+                    xd[i]*100.*TMath::Cos(Angle) - 119.3 + fib_halfwidth * TMath::Cos(Angle),
+                    yd[i],
+                    0. - xd[i]*100. * TMath::Sin(Angle) + 660.2 + fib_halfwidth * TMath::Sin(Angle) ,
+                    qd[i], det[i]);
+
             f10_hits.push_back(det_hit);
         } 
 
         else if(det[i] == 3) //fi11
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(xd[i]*100,
+                    yd[i],
+                    zd[i],
+                    qd[i], det[i]);
             f11_hits.push_back(det_hit);
         }
 
-        else if(det[i] == 4) //fi12
+        else if(det[i] == 4) //fi12 -->Similar to Fib10
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(
+                    xd[i]*100.*TMath::Cos(Angle) - 92.4 + fib_halfwidth * TMath::Cos(Angle),
+                    yd[i],
+                    0. - xd[i] * 100. * TMath::Sin(Angle) + 575.5 + fib_halfwidth * TMath::Sin(Angle) ,
+                    qd[i], det[i]);
             f12_hits.push_back(det_hit);
         }
 
         else if(det[i] == 5) //fi13
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(
+                    xd[i]*100.,
+                    yd[i],
+                    zd[i],
+                    qd[i], det[i]);
             f13_hits.push_back(det_hit);
         }
 
-        else if(det[i] == 6 || det[i] ==7 || det[i] ==8 || det[i]==9) //fi13
+        else if(det[i] == 6 || det[i] ==7 || det[i] ==8 || det[i]==9) //dTOF
         {
-            det_hit.Set_XYZQ(xd[i], yd[i],  zd[i], qd[i], det[i]);
+            det_hit.Set_XYZQ(
+                    xd[i]*100.,
+                    yd[i]*100.,
+                    zd[i],
+                    qd[i], det[i]);
             dtof_hits.push_back(det_hit);
         }
 
         else continue;
+    }//end of transformation to the lab system
 
+    //Now actual tracking
+    if(f12_hits.size()==0 || f10_hits.size()==0 
+            //|| f12_hits.size()>3 || f10_hits.size()>3 
+            || f3a_hits.size()!=0 || f3b_hits.size()!=0) return;
 
+    //cout << "\n\nNew event ******************************" << endl;
+    for(auto & _hit_f12 : f12_hits)
+    {
+        for(auto & _hit_f10 : f10_hits)
+        {
+            X0.edata[0] = 0; // TX0 value for unreacted beam
+            X0.edata[1] = _hit_f12.X;
+            X0.edata[2] = _hit_f12.Z;
+            X0.edata[3] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
+
+            MDF_X0->X2P(X0.edata,  X0.pdata);
+            X0.value = MDF_X0->MDF(X0.pdata);
+            X0_data.push_back(X0);
+            //cout << "\n\tReconstructed X0 = " << X0.value;
+        }
     }
 
     return;
