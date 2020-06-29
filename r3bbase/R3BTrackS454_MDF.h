@@ -250,115 +250,17 @@ class R3BTrackS454_MDF : public FairTask
 	Int_t ndet = 10;
 
 
-
-
-
-    TH1F* fh_Tpat;
-    TH1F* fh_Trigger;
-    TH1F* fh_IC;
-    TH1F* fh_SEE;
-    TH1F* fh_TOFDOR;
-
-    TH2F* fh_califa_energy;
-	
-    TH2F* fh_xy_Fib[NOF_FIB_DET];
-    TH2F* fh_xy_Fib_ac[NOF_FIB_DET];
-    TH1F* fh_mult_Fib[NOF_FIB_DET];
-    TH1F* fh_mult_Fib_ac[NOF_FIB_DET];
-    TH2F* fh_Fib_ToF[NOF_FIB_DET];
-    TH2F* fh_Fib_ToF_ac[NOF_FIB_DET];
-    TH2F* fh_Fib_Time[NOF_FIB_DET];
-    TH2F* fh_Fib_Time_ac[NOF_FIB_DET];
-    TH2F* fh_ToT_Fib[NOF_FIB_DET];
-    TH2F* fh_ToT_Fib_ac[NOF_FIB_DET];
-    TH2F* fh_Fib_vs_Events[NOF_FIB_DET];
-    TH2F* fh_Fib_vs_Events_ac[NOF_FIB_DET];
-    TH2F* fh_Fibs_vs_Tofd[NOF_FIB_DET];
-    TH2F* fh_Fibs_vs_Tofd_ac[NOF_FIB_DET];
-    TH2F* fh_ToF_vs_Events[NOF_FIB_DET];
-    TH2F* fh_ToF_vs_Events_ac[NOF_FIB_DET];
-
-	TH2F* fh_Fib13_vs_Fib11;
-	TH2F* fh_Fib13_vs_Fib11_dx;
-	TH2F* fh_Fib11_vs_Fib3a;
-	TH2F* fh_Fib11_vs_Fib3a_dx;
-	TH2F* fh_Fib10_vs_Fib12;
-	TH2F* fh_Fib10_vs_Fib12_dx;
-	TH2F* fh_Fib12_vs_Fib3b;
-	TH2F* fh_Fib12_vs_Fib3b_dx;
-
-	TH2F* fh_Fib13_vs_Fib11_back;
-	TH2F* fh_Fib13_vs_Fib11_dx_back;
-	TH2F* fh_Fib11_vs_Fib3a_back;
-	TH2F* fh_Fib11_vs_Fib3a_dx_back;
-	TH2F* fh_Fib10_vs_Fib12_back;
-	TH2F* fh_Fib10_vs_Fib12_dx_back;
-	TH2F* fh_Fib12_vs_Fib3b_back;
-	TH2F* fh_Fib12_vs_Fib3b_dx_back;
-
-    TH2F* fh_Cave_position;
-
-    TH2F* fh_xy_tofd;
-    TH2F* fh_xy_tofd_ac;
-    TH1F* fh_tofd_charge;
-    TH1F* fh_tofd_charge_ac;
-    TH1F* fh_tofd_time;
-    TH1F* fh_tofd_time_ac;
-    TH1F* fh_TimePreviousEvent;
-    TH1F* fh_tofd_mult;
-    TH1F* fh_tofd_mult_ac;
-	TH2F* fh_tofd_q2_vs_q1;
-	TH2F* fh_tofd_q2_vs_q1_ac;
-
-    TH2F* fh_target_xy;
-    TH1F* fh_target_px;
-    TH1F* fh_target_py;
-    TH1F* fh_target_pz;
-    TH1F* fh_target_p;
-    TH1F* fh_chi2;
-    TH1F* fh_px_He;
-    TH1F* fh_py_He;
-    TH1F* fh_pz_He;
-    TH1F* fh_p_He;
-    TH1F* fh_px_C;
-    TH1F* fh_py_C;
-    TH1F* fh_pz_C;
-    TH1F* fh_p_C;
-
-    TH2F* fh_chiy_vs_chix;
-    
-
-    TH1F* fh_dx;
-    TH1F* fh_dy;
-    TH1F* fh_dz;
-    TH1F* fh_dpx;
-    TH1F* fh_dpy;
-    TH1F* fh_dpz;
-    TH1F* fh_dp;
-    TH2F* fh_thetax_dpx;
-    TH2F* fh_thetax_dpx_abs;
-    TH2F* fh_thetay_dpy;
-    TH2F* fh_x_dpx;
-    TH2F* fh_y_dpy;
-    TH2F* fh_thetax_dpy;
-    TH2F* fh_thetay_dpx;
-    TH2F* fh_dpy_dpx;
-
-    TH1F* fh_theta26_simu;
-    TH1F* fh_Erel_simu;
-    TH1F* fh_theta26;
-    TH1F* fh_Erel;
-
-    TH2F* fh_dErel_vs_x;
-    TH2F* fh_dErel_vs_y;
-
-    TH2F* fh_xy[10];
-    TH2F* fh_p_vs_x[10];
-    TH2F* fh_p_vs_x_test[10];
-
     //Define what is needed for MDF tracking
 
+    TH1F * h_X0_mdf;
+    TH1F * h_TX0_mdf;
+    TH1F * h_PoQ_mdf;
+    TH1F * h_glob_track_mul;
+    TH2F * h_lab_xz;
+
     R3BMDFWrapper * MDF_X0;
+    R3BMDFWrapper * MDF_TX0;
+    R3BMDFWrapper * MDF_PoQ;
 
   public:
 
@@ -372,12 +274,6 @@ class R3BTrackS454_MDF : public FairTask
         void Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Int_t q, Int_t _det);
     };
 
-    struct MDF_Data_X0 //TX0, X1, Z1, TX1
-    {
-        Double_t edata[4];
-        Double_t pdata[4];
-        Double_t value;
-    };
 
     std::vector<Detector_Hit> f3a_hits;
     std::vector<Detector_Hit> f3b_hits;
@@ -387,7 +283,32 @@ class R3BTrackS454_MDF : public FairTask
     std::vector<Detector_Hit> f13_hits;
     std::vector<Detector_Hit> dtof_hits;
 
+    //MDF data containers
+    struct MDF_Data_X0 //TX0, X1, Z1, TX1
+    {
+        Double_t edata[4];
+        Double_t pdata[4];
+        Double_t value;
+    };
+
+    struct MDF_Data_TX0 //X0, Z0, X1, Z1, TX1
+    {
+        Double_t edata[5];
+        Double_t pdata[5];
+        Double_t value;
+    };
+
+    struct MDF_Data_PoQ //X0, Z0, X1, Z1, TX1
+    {
+        Double_t edata[5];
+        Double_t pdata[5];
+        Double_t value;
+    };
+
+
     std::vector<MDF_Data_X0> X0_data;
+    std::vector<MDF_Data_TX0> TX0_data;
+    std::vector<MDF_Data_PoQ> PoQ_data;
 
   public:
     ClassDef(R3BTrackS454_MDF, 1)

@@ -106,12 +106,6 @@ R3BTrackS454_MDF::R3BTrackS454_MDF(const char* name, Int_t iVerbose)
 
 R3BTrackS454_MDF::~R3BTrackS454_MDF()
 {
-    for (int i = 0; i < NOF_FIB_DET; i++)
-    {
-        delete fh_xy_Fib[i];
-        delete fh_mult_Fib[i];
-        delete fh_ToT_Fib[i];
-    }
     delete fTrackItems;
 }
 
@@ -193,10 +187,6 @@ InitStatus R3BTrackS454_MDF::Init()
     // create histograms of all detectors
     //------------------------------------------------------------------------
 
-    char strNameC[255];
-    sprintf(strNameC, "Cave_C_position");
-    fh_Cave_position = new TH2F(strNameC, "", 210, -100., 200., 1000, -500., 500.);
-
     //-----------------------------------------------------------------------
     // BeamMonitor
 
@@ -206,486 +196,33 @@ InitStatus R3BTrackS454_MDF::Init()
     calib_SEE = 135641.7786 * fpow;
     LOG(DEBUG) << fsens_SEE << ", " << fexp << ", " << fpow << ", " << calib_SEE << endl;
 
-    fh_Tpat = new TH1F("Tpat", "Tpat", 20, 0, 20);
-    fh_Tpat->GetXaxis()->SetTitle("Tpat value");
-
-    fh_Trigger = new TH1F("Trigger", "Trigger all", 20, 0, 20);
-    fh_Trigger->GetXaxis()->SetTitle("Trigger value");
-
-    fh_IC = new TH1F("IC", "IC ", 1000, 0, 1000);
-    fh_IC->GetXaxis()->SetTitle("spill number");
-    fh_IC->GetYaxis()->SetTitle("IC counts");
-
-    fh_SEE = new TH1F("SEETRAM", "SEETRAM ", 1000, 0, 1000);
-    fh_SEE->GetXaxis()->SetTitle("spill number");
-    fh_SEE->GetYaxis()->SetTitle("SEETRAM counts");
-
-    fh_TOFDOR = new TH1F("TOFDOR", "TOFDOR ", 1000, 0, 1000);
-    fh_TOFDOR->GetXaxis()->SetTitle("spill number");
-    fh_TOFDOR->GetYaxis()->SetTitle("TOFDOR counts");
-
-    //-----------------------------------------------------------------------
-    // compare against MC Simulations
-
-    fh_target_px = new TH1F("target_px", "target px ", 2000, -500., 500);
-    fh_target_px->GetXaxis()->SetTitle("px / MeV/c");
-    fh_target_px->GetYaxis()->SetTitle("counts");
-
-    fh_target_py = new TH1F("target_py", "target py ", 2000, -500., 500);
-    fh_target_py->GetXaxis()->SetTitle("py / MeV/c");
-    fh_target_py->GetYaxis()->SetTitle("counts");
-
-    fh_target_pz = new TH1F("target_pz", "target pz ", 30000, 0., 30000.);
-    fh_target_pz->GetXaxis()->SetTitle("pz / MeV/c");
-    fh_target_pz->GetYaxis()->SetTitle("counts");
-
-    fh_target_p = new TH1F("target_p", "target p ", 30000, 0., 30000.);
-    fh_target_p->GetXaxis()->SetTitle("pz / MeV/c");
-    fh_target_p->GetYaxis()->SetTitle("counts");
-
-    fh_px_He = new TH1F("px_He", " px He", 2000, -500., 500);
-    fh_px_He->GetXaxis()->SetTitle("px / MeV/c");
-    fh_px_He->GetYaxis()->SetTitle("counts");
-
-    fh_py_He = new TH1F("py_He", " py He", 2000, -500., 500);
-    fh_py_He->GetXaxis()->SetTitle("py / MeV/c");
-    fh_py_He->GetYaxis()->SetTitle("counts");
-
-    fh_pz_He = new TH1F("pz_He", " pz He", 30000, 0., 30000.);
-    fh_pz_He->GetXaxis()->SetTitle("pz / MeV/c");
-    fh_pz_He->GetYaxis()->SetTitle("counts");
-
-    fh_p_He = new TH1F("p_He", " p He", 30000, 0., 30000.);
-    fh_p_He->GetXaxis()->SetTitle("pz / MeV/c");
-    fh_p_He->GetYaxis()->SetTitle("counts");
-
-    fh_px_C = new TH1F("px_C", " px C", 2000, -500., 500);
-    fh_px_C->GetXaxis()->SetTitle("px / MeV/c");
-    fh_px_C->GetYaxis()->SetTitle("counts");
-
-    fh_py_C = new TH1F("py_c", " py C", 2000, -500., 500);
-    fh_py_C->GetXaxis()->SetTitle("py / MeV/c");
-    fh_py_C->GetYaxis()->SetTitle("counts");
-
-    fh_pz_C = new TH1F("pz_C", " pz C", 30000, 0., 30000.);
-    fh_pz_C->GetXaxis()->SetTitle("pz / MeV/c");
-    fh_pz_C->GetYaxis()->SetTitle("counts");
-
-    fh_p_C = new TH1F("p_C", " p C", 30000, 0., 30000.);
-    fh_p_C->GetXaxis()->SetTitle("pz / MeV/c");
-    fh_p_C->GetYaxis()->SetTitle("counts");
-
-    fh_target_xy = new TH2F("target_xy", "target xy ", 100, -0.5, 0.5, 100, -0.5, 0.5);
-    fh_target_xy->GetXaxis()->SetTitle("x / cm");
-    fh_target_xy->GetYaxis()->SetTitle("y / cm");
-
-    fh_chi2 = new TH1F("chi2", "chi2 ", 1000, 0., 100);
-    fh_chi2->GetXaxis()->SetTitle("Chi2");
-    fh_chi2->GetYaxis()->SetTitle("counts");
-
-    fh_dx = new TH1F("tracker_dx", "tracker dx ", 200, -5., 5);
-    fh_dx->GetXaxis()->SetTitle("dx / cm");
-    fh_dx->GetYaxis()->SetTitle("counts");
-
-    fh_dy = new TH1F("tracker_dy", "tracker dy ", 200, -5., 5.);
-    fh_dy->GetXaxis()->SetTitle("dy / cm");
-    fh_dy->GetYaxis()->SetTitle("counts");
-
-    fh_dz = new TH1F("tracker_dz", "tracker dz ", 200, -5., 5.);
-    fh_dz->GetXaxis()->SetTitle("dz / cm");
-    fh_dz->GetYaxis()->SetTitle("counts");
-
-    fh_dpx = new TH1F("tracker_dpx", "tracker dpx ", 200, -10, 10);
-    fh_dpx->GetXaxis()->SetTitle("dpx / percent");
-    fh_dpx->GetYaxis()->SetTitle("counts");
-
-    fh_dpy = new TH1F("tracker_dpy", "tracker dpy ", 200, -10, 10);
-    fh_dpy->GetXaxis()->SetTitle("dpy / percent");
-    fh_dpy->GetYaxis()->SetTitle("counts");
-
-    fh_dpz = new TH1F("tracker_dpz", "tracker dpz ", 200, -10, 10);
-    fh_dpz->GetXaxis()->SetTitle("dpz / percent");
-    fh_dpz->GetYaxis()->SetTitle("counts");
-
-    fh_dp = new TH1F("tracker_dp", "tracker dp ", 200, -10, 10);
-    fh_dp->GetXaxis()->SetTitle("dp / percent");
-    fh_dp->GetYaxis()->SetTitle("counts");
-
-    fh_thetax_dpx = new TH2F("tracker_thethax_dpx", "tracker theta_x vs dpx ", 100, -50, 50, 200, -100., 100.);
-    fh_thetax_dpx->GetXaxis()->SetTitle("dpx / percent");
-    fh_thetax_dpx->GetYaxis()->SetTitle("theta_x / mrad");
-
-    fh_dpy_dpx = new TH2F("tracker_dpy_dpx", "tracker dpy vs dpx ", 200, -100, 100, 200, -100., 100.);
-    fh_dpy_dpx->GetXaxis()->SetTitle("dpx / percent");
-    fh_dpy_dpx->GetYaxis()->SetTitle("dpy / percent");
-
-    fh_thetay_dpy = new TH2F("tracker_thethay_dpy", "tracker theta_y vs dpy ", 100, -50, 50, 200, -100., 100.);
-    fh_thetay_dpy->GetXaxis()->SetTitle("dpy / percent");
-    fh_thetay_dpy->GetYaxis()->SetTitle("theta_y / mrad");
-
-    fh_thetax_dpy = new TH2F("tracker_thethax_dpy", "tracker theta_x vs dpy ", 100, -50, 50, 200, -100., 100.);
-    fh_thetax_dpy->GetXaxis()->SetTitle("dpy / percent");
-    fh_thetax_dpy->GetYaxis()->SetTitle("theta_x / mrad");
-
-    fh_thetay_dpx = new TH2F("tracker_thethay_dpx", "tracker theta_y vs dpx ", 100, -50, 50, 200, -100., 100.);
-    fh_thetay_dpx->GetXaxis()->SetTitle("dpx / percent");
-    fh_thetay_dpx->GetYaxis()->SetTitle("theta_y / mrad");
-
-    fh_thetax_dpx_abs =
-        new TH2F("tracker_thethax_dpx_abs", "tracker theta_x vs dpx abs ", 100, -50, 50, 200, -100., 100.);
-    fh_thetax_dpx_abs->GetXaxis()->SetTitle("dpx");
-    fh_thetax_dpx_abs->GetYaxis()->SetTitle("theta_x / mrad");
-
-    fh_x_dpx = new TH2F("tracker_x_dpx", "tracker x vs dpx ", 100, -50, 50, 200, -10., 10.);
-    fh_x_dpx->GetXaxis()->SetTitle("dpx / percent");
-    fh_x_dpx->GetYaxis()->SetTitle("x / cm");
-
-    fh_y_dpy = new TH2F("tracker_y_dpy", "tracker y vs dpy ", 100, -50, 50, 200, -10., 10.);
-    fh_y_dpy->GetXaxis()->SetTitle("dpy / percent");
-    fh_y_dpy->GetYaxis()->SetTitle("y / cm");
-
-    // histograms for track hits
-    for (Int_t i = 0; i < ndet; i++)
-    {
-        fh_xy[i] = new TH2F(Form("xy_%i", i), Form("xy of Det %i", i), 600, -30, 30, 1200, -60., 60.);
-        fh_xy[i]->GetXaxis()->SetTitle("x / cm");
-        fh_xy[i]->GetYaxis()->SetTitle("y / cm");
-
-        fh_p_vs_x[i] = new TH2F(Form("PvsX%i", i), Form("pz vs. x of Det %i", i), 1200, -60, 60, 4000, 0., 40000.);
-        fh_p_vs_x[i]->GetXaxis()->SetTitle("x position / cm");
-        fh_p_vs_x[i]->GetYaxis()->SetTitle("p / MeV/c");
-
-        fh_p_vs_x_test[i] =
-            new TH2F(Form("PvsX_test%i", i), Form("p vs. x of Det %i test", i), 1200, -60, 60, 4000, 0., 40000.);
-        fh_p_vs_x_test[i]->GetXaxis()->SetTitle("x position / cm");
-        fh_p_vs_x_test[i]->GetYaxis()->SetTitle("p / MeV/c");
-    }
-    //-----------------------------------------------------------------------
-    // Fiber Detectors 1-NOF_FIB_DET
-
-    char canvName[255];
-    UInt_t Nmax = 1e7;
-    for (Int_t ifibcount = 0; ifibcount < NOF_FIB_DET; ifibcount++)
-    {
-        if (fCalItems.at(DET_FI_FIRST + ifibcount) || fHitItems.at(DET_FI_FIRST + ifibcount))
-        {
-
-            const char* detName;
-            const char* detName2;
-            detName = fDetectorNames[DET_FI_FIRST + ifibcount];
-
-            LOG(DEBUG) << "I am creating canvas " << detName << endl;
-
-            // xy:
-            fh_xy_Fib[ifibcount] =
-                new TH2F(Form("%s_xy", detName), Form("%s xy", detName), 600, -30., 30., 200, -1000., 1000.);
-            fh_xy_Fib[ifibcount]->GetXaxis()->SetTitle("x / cm ");
-            fh_xy_Fib[ifibcount]->GetYaxis()->SetTitle("y / cm");
-
-            fh_xy_Fib_ac[ifibcount] = new TH2F(
-                    Form("%s_xy_ac", detName), Form("%s xy after cuts", detName), 600, -30., 30., 200, -100., 100.);
-            fh_xy_Fib_ac[ifibcount]->GetXaxis()->SetTitle("x / cm ");
-            fh_xy_Fib_ac[ifibcount]->GetYaxis()->SetTitle("y / cm");
-
-            // Multiplicity (number of hit fibers):
-            fh_mult_Fib[ifibcount] = new TH1F(Form("%s_mult", detName), Form("%s # of fibers", detName), 500, 0., 500.);
-            fh_mult_Fib[ifibcount]->GetXaxis()->SetTitle("Multiplicity");
-            fh_mult_Fib[ifibcount]->GetYaxis()->SetTitle("Counts");
-
-            fh_mult_Fib_ac[ifibcount] =
-                new TH1F(Form("%s_mult_ac", detName), Form("%s # of fibers after cuts", detName), 500, 0., 500.);
-            fh_mult_Fib_ac[ifibcount]->GetXaxis()->SetTitle("Multiplicity");
-            fh_mult_Fib_ac[ifibcount]->GetYaxis()->SetTitle("Counts");
-
-            // ToT MAPMT:
-            fh_ToT_Fib[ifibcount] =
-                new TH2F(Form("%s_tot_m", detName), Form("%s ToT of MAPMT", detName), 600, -30., 30, 400, 0., 400.);
-            fh_ToT_Fib[ifibcount]->GetXaxis()->SetTitle("Fiber x / cm");
-            fh_ToT_Fib[ifibcount]->GetYaxis()->SetTitle("ToT / ns");
-
-            fh_ToT_Fib_ac[ifibcount] = new TH2F(Form("%s_tot_m_ac", detName),
-                    Form("%s ToT of MAPMT after cuts", detName),
-                    600,
-                    -30.,
-                    30,
-                    400,
-                    0.,
-                    400.);
-            fh_ToT_Fib_ac[ifibcount]->GetXaxis()->SetTitle("Fiber x / cm");
-            fh_ToT_Fib_ac[ifibcount]->GetYaxis()->SetTitle("ToT / ns");
-
-            // ToF Tofd -> Fiber:
-            fh_Fib_ToF[ifibcount] = new TH2F(
-                    Form("%s_tof", detName), Form("%s ToF Tofd to Fiber", detName), 600, -30., 30, 10000, -1100., 1100.);
-            fh_Fib_ToF[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
-            fh_Fib_ToF[ifibcount]->GetXaxis()->SetTitle("x / cm");
-
-            fh_Fib_ToF_ac[ifibcount] = new TH2F(Form("%s_tof_ac", detName),
-                    Form("%s ToF Tofd to Fiber after cuts", detName),
-                    600,
-                    -30.,
-                    30,
-                    10000,
-                    -1000.,
-                    1000.);
-            fh_Fib_ToF_ac[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
-            fh_Fib_ToF_ac[ifibcount]->GetXaxis()->SetTitle("x / cm");
-
-            // Time:
-            fh_Fib_Time[ifibcount] =
-                new TH2F(Form("%s_time", detName), Form("%s Time", detName), 600, -30., 30, 4000, -4000., 4000.);
-            fh_Fib_Time[ifibcount]->GetYaxis()->SetTitle("Time / ns");
-            fh_Fib_Time[ifibcount]->GetXaxis()->SetTitle("x / cm");
-
-            fh_Fib_Time_ac[ifibcount] = new TH2F(
-                    Form("%s_time_ac", detName), Form("%s Time after cuts", detName), 600, -30., 30, 4000, -4000., 4000.);
-            fh_Fib_Time_ac[ifibcount]->GetYaxis()->SetTitle("Time / ns");
-            fh_Fib_Time_ac[ifibcount]->GetXaxis()->SetTitle("x / cm");
-
-            // ToF Tofd -> Fiber vs. event number:
-            fh_ToF_vs_Events[ifibcount] = new TH2F(Form("%s_tof_vs_events", detName),
-                    Form("%s ToF Tofd to Fiber vs event number", detName),
-                    10000,
-                    0,
-                    Nmax,
-                    2200,
-                    -5100,
-                    5100);
-            fh_ToF_vs_Events[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
-            fh_ToF_vs_Events[ifibcount]->GetXaxis()->SetTitle("event number");
-
-            fh_ToF_vs_Events_ac[ifibcount] = new TH2F(Form("%s_tof_vs_events_ac", detName),
-                    Form("%s ToF Tofd to Fiber vs event number after cuts", detName),
-                    10000,
-                    0,
-                    Nmax,
-                    2200,
-                    -5100,
-                    5100);
-            fh_ToF_vs_Events_ac[ifibcount]->GetYaxis()->SetTitle("ToF / ns");
-            fh_ToF_vs_Events_ac[ifibcount]->GetXaxis()->SetTitle("event number");
-
-            // hit fiber number vs. event number:
-            fh_Fib_vs_Events[ifibcount] = new TH2F(Form("%s_fib_vs_event", detName),
-                    Form("%s Fiber # vs. Event #", detName),
-                    10000,
-                    0,
-                    Nmax,
-                    600,
-                    -30.,
-                    30.);
-            fh_Fib_vs_Events[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
-            fh_Fib_vs_Events[ifibcount]->GetXaxis()->SetTitle("Event number");
-
-            fh_Fib_vs_Events_ac[ifibcount] = new TH2F(Form("%s_fib_vs_event_ac", detName),
-                    Form("%s Fiber # vs. Event # after cuts", detName),
-                    10000,
-                    0,
-                    Nmax,
-                    600,
-                    -30.,
-                    30.);
-            fh_Fib_vs_Events_ac[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
-            fh_Fib_vs_Events_ac[ifibcount]->GetXaxis()->SetTitle("Event number");
-
-            // hit fiber number vs. TofD position:
-            fh_Fibs_vs_Tofd[ifibcount] = new TH2F(Form("%s_fib_vs_TofdX", detName),
-                    Form("%s Fiber # vs. Tofd x-pos", detName),
-                    200,
-                    -100,
-                    100,
-                    200,
-                    -100.,
-                    100.);
-            fh_Fibs_vs_Tofd[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
-            fh_Fibs_vs_Tofd[ifibcount]->GetXaxis()->SetTitle("Tofd x / cm");
-
-            fh_Fibs_vs_Tofd_ac[ifibcount] = new TH2F(Form("%s_fib_vs_TofdX_ac", detName),
-                    Form("%s Fiber # vs. Tofd x-pos after cuts", detName),
-                    200,
-                    -100,
-                    100,
-                    200,
-                    -100.,
-                    100.);
-            fh_Fibs_vs_Tofd_ac[ifibcount]->GetYaxis()->SetTitle("Fiber x / cm");
-            fh_Fibs_vs_Tofd_ac[ifibcount]->GetXaxis()->SetTitle("Tofd x / cm");
-
-            // hit fiber vs. fiber position:
-
-        } // end if(Mapped)
-
-    } // end for(ifibcount)
-    fh_Fib13_vs_Fib11 = new TH2F("fib13_vs_fib11", "Fiber 13 vs. Fiber 11", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib13_vs_Fib11->GetYaxis()->SetTitle("Fiber13");
-    fh_Fib13_vs_Fib11->GetXaxis()->SetTitle("Fiber11");
-
-    fh_Fib11_vs_Fib3a = new TH2F("fib11_vs_fib3a", "Fiber 11 vs. Fiber 3a", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib11_vs_Fib3a->GetYaxis()->SetTitle("Fiber11");
-    fh_Fib11_vs_Fib3a->GetXaxis()->SetTitle("Fiber3a");
-
-    fh_Fib10_vs_Fib12 = new TH2F("fib10_vs_fib12", "Fiber 10 vs. Fiber 12", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib10_vs_Fib12->GetYaxis()->SetTitle("Fiber10");
-    fh_Fib10_vs_Fib12->GetXaxis()->SetTitle("Fiber12");
-
-    fh_Fib12_vs_Fib3b = new TH2F("fib12_vs_fib3b", "Fiber 12 vs. Fiber 3b", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib12_vs_Fib3b->GetYaxis()->SetTitle("Fiber12");
-    fh_Fib12_vs_Fib3b->GetXaxis()->SetTitle("Fiber3b");
-
-    // dx between fibers vs x
-    fh_Fib13_vs_Fib11_dx = new TH2F("fib13_fib11_dx", "dx of Fiber 13 and Fiber 11", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib13_vs_Fib11_dx->GetYaxis()->SetTitle("xFi13 - xFi11 / cm");
-    fh_Fib13_vs_Fib11_dx->GetXaxis()->SetTitle("x Fi11 / cm");
-
-    fh_Fib11_vs_Fib3a_dx = new TH2F("fib11_fib3a_dx", "dx of Fiber 11 and Fiber 3a", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib11_vs_Fib3a_dx->GetYaxis()->SetTitle("xFi11 - xFi3a / cm");
-    fh_Fib11_vs_Fib3a_dx->GetXaxis()->SetTitle("x Fi3a / cm");
-
-    fh_Fib10_vs_Fib12_dx = new TH2F("fib10_fib12_dx", "dx of Fiber 10 and Fiber 12", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib10_vs_Fib12_dx->GetYaxis()->SetTitle("xFi10 - xFi12 / cm");
-    fh_Fib10_vs_Fib12_dx->GetXaxis()->SetTitle("x Fi12 / cm");
-
-    fh_Fib12_vs_Fib3b_dx = new TH2F("fib12_fib3b_dx", "dx of Fiber 12 and Fiber 3b", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib12_vs_Fib3b_dx->GetYaxis()->SetTitle("xFi12 - xFi3b / cm");
-    fh_Fib12_vs_Fib3b_dx->GetXaxis()->SetTitle("x Fi3b / cm");
-
-    fh_Fib13_vs_Fib11_back =
-        new TH2F("fib13_vs_fib11_back", "Fiber 13 vs. Fiber 11 back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib13_vs_Fib11_back->GetYaxis()->SetTitle("Fiber13");
-    fh_Fib13_vs_Fib11_back->GetXaxis()->SetTitle("Fiber11");
-
-    fh_Fib11_vs_Fib3a_back =
-        new TH2F("fib11_vs_fib3a_back", "Fiber 11 vs. Fiber 3a back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib11_vs_Fib3a_back->GetYaxis()->SetTitle("Fiber11");
-    fh_Fib11_vs_Fib3a_back->GetXaxis()->SetTitle("Fiber3a");
-
-    fh_Fib10_vs_Fib12_back =
-        new TH2F("fib10_vs_fib12_back", "Fiber 10 vs. Fiber 12 back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib10_vs_Fib12_back->GetYaxis()->SetTitle("Fiber10");
-    fh_Fib10_vs_Fib12_back->GetXaxis()->SetTitle("Fiber12");
-
-    fh_Fib12_vs_Fib3b_back =
-        new TH2F("fib12_vs_fib3b_back", "Fiber 12 vs. Fiber 3b back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib12_vs_Fib3b_back->GetYaxis()->SetTitle("Fiber12");
-    fh_Fib12_vs_Fib3b_back->GetXaxis()->SetTitle("Fiber3b");
-
-    // dx between fibers vs x
-    fh_Fib13_vs_Fib11_dx_back =
-        new TH2F("fib13_fib11_dx_back", "dx of Fiber 13 and Fiber 11 back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib13_vs_Fib11_dx_back->GetYaxis()->SetTitle("xFi13 - xFi11 / cm");
-    fh_Fib13_vs_Fib11_dx_back->GetXaxis()->SetTitle("x Fi11 / cm");
-
-    fh_Fib11_vs_Fib3a_dx_back =
-        new TH2F("fib11_fib3a_dx_back", "dx of Fiber 11 and Fiber 3a back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib11_vs_Fib3a_dx_back->GetYaxis()->SetTitle("xFi11 - xFi3a / cm");
-    fh_Fib11_vs_Fib3a_dx_back->GetXaxis()->SetTitle("x Fi3a / cm");
-
-    fh_Fib10_vs_Fib12_dx_back =
-        new TH2F("fib10_fib12_dx_back", "dx of Fiber 10 and Fiber 12 back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib10_vs_Fib12_dx_back->GetYaxis()->SetTitle("xFi10 - xFi12 / cm");
-    fh_Fib10_vs_Fib12_dx_back->GetXaxis()->SetTitle("x Fi12 / cm");
-
-    fh_Fib12_vs_Fib3b_dx_back =
-        new TH2F("fib12_fib3b_dx_back", "dx of Fiber 12 and Fiber 3b back", 1000, -50, 50, 1000, -50., 50.);
-    fh_Fib12_vs_Fib3b_dx_back->GetYaxis()->SetTitle("xFi12 - xFi3b / cm");
-    fh_Fib12_vs_Fib3b_dx_back->GetXaxis()->SetTitle("x Fi3b / cm");
-
-    //---------------------------------------------------------------------------------------------------
-    // TofD detector
-
-    if (fHitItems.at(DET_TOFD) || fCalItems.at(DET_TOFD))
-    {
-
-        // xy:
-        fh_xy_tofd = new TH2F("tofd_xy", "tofd xy", 200, -100., 100., 200, -100., 100.);
-        fh_xy_tofd->GetXaxis()->SetTitle("x / cm ");
-        fh_xy_tofd->GetYaxis()->SetTitle("y / cm");
-
-        fh_xy_tofd_ac = new TH2F("tofd_xy_ac", "tofd xy after cuts", 200, -100., 100., 200, -100., 100.);
-        fh_xy_tofd_ac->GetXaxis()->SetTitle("x / cm ");
-        fh_xy_tofd_ac->GetYaxis()->SetTitle("y / cm");
-
-        fh_tofd_charge = new TH1F("tofd_Q", "Charge of Tofd", 200, 0., 20.);
-        fh_tofd_charge->GetXaxis()->SetTitle("x / cm ");
-        fh_tofd_charge->GetYaxis()->SetTitle("y / cm");
-
-        fh_tofd_charge_ac = new TH1F("tofd_Q_ac", "Charge of Tofd after cuts", 200, 0., 20.);
-        fh_tofd_charge_ac->GetXaxis()->SetTitle("x / cm ");
-        fh_tofd_charge_ac->GetYaxis()->SetTitle("y / cm");
-
-        fh_tofd_mult = new TH1F("tofd_mult", "ToFD multiplicits ", 100, 0, 100);
-        fh_tofd_mult->GetXaxis()->SetTitle("multiplicity");
-        fh_tofd_mult->GetYaxis()->SetTitle("counts");
-
-        fh_tofd_mult_ac = new TH1F("tofd_mult_ac", "ToFD multiplicits after cuts", 100, 0, 100);
-        fh_tofd_mult_ac->GetXaxis()->SetTitle("multiplicity");
-        fh_tofd_mult_ac->GetYaxis()->SetTitle("counts");
-
-        fh_TimePreviousEvent = new TH1F("TimePreviousEvent", "Time between 2 particles ", 3000, 0, 3000);
-        fh_TimePreviousEvent->GetXaxis()->SetTitle("time / ns");
-        fh_TimePreviousEvent->GetYaxis()->SetTitle("counts");
-
-        fh_tofd_time = new TH1F("tofd_time", "Tofd times ", 40000, -2000, 2000);
-        fh_tofd_time->GetXaxis()->SetTitle("time / ns");
-        fh_tofd_time->GetYaxis()->SetTitle("counts");
-
-        fh_tofd_time_ac = new TH1F("tofd_time_ac", "Tofd times after cut", 40000, -2000, 2000);
-        fh_tofd_time_ac->GetXaxis()->SetTitle("time / ns");
-        fh_tofd_time_ac->GetYaxis()->SetTitle("counts");
-
-        fh_tofd_q2_vs_q1 = new TH2F("tofd_q2_vs_q1", "tofd q2 vs. q1", 500, 0., 50., 500, 0., 50.);
-        fh_tofd_q2_vs_q1->GetXaxis()->SetTitle("q1");
-        fh_tofd_q2_vs_q1->GetYaxis()->SetTitle("q2");
-
-        fh_tofd_q2_vs_q1_ac = new TH2F("tofd_q2_vs_q1_ac", "tofd q2 vs. q1 after cut", 500, 0., 50., 500, 0., 50.);
-        fh_tofd_q2_vs_q1_ac->GetXaxis()->SetTitle("q1");
-        fh_tofd_q2_vs_q1_ac->GetYaxis()->SetTitle("q2");
-    }
-
-    if (fMappedItems.at(DET_CALIFA))
-    {
-        fh_califa_energy = new TH2F("fh_califa_energy", "Califa E vs crystal id", 2000, 0, 2000, 1000, 0., 1000.);
-        fh_califa_energy->GetYaxis()->SetTitle("Energy / MeV");
-        fh_califa_energy->GetXaxis()->SetTitle("Crystal #");
-    }
-
-    // Analysis
-    fh_chiy_vs_chix = new TH2F("chiy_vs_chix", "chi y vs. q1", 500, 0., 500., 500, 0., 500.);
-    fh_chiy_vs_chix->GetXaxis()->SetTitle("chi x");
-    fh_chiy_vs_chix->GetYaxis()->SetTitle("chi y");
-
-    fh_theta26 = new TH1F("theta26", "theta 26 ", 500, 0., 5);
-    fh_theta26->GetXaxis()->SetTitle("angle / degree");
-    fh_theta26->GetYaxis()->SetTitle("counts");
-
-    fh_theta26_simu = new TH1F("theta26_simu", "theta 26 simulation", 500, 0., 5);
-    fh_theta26_simu->GetXaxis()->SetTitle("angle / degree");
-    fh_theta26_simu->GetYaxis()->SetTitle("counts");
-
-    fh_Erel = new TH1F("Erel", "Erel ", 5000, 0., 100);
-    fh_Erel->GetXaxis()->SetTitle("Erel / MeV");
-    fh_Erel->GetYaxis()->SetTitle("counts");
-
-    fh_Erel_simu = new TH1F("Erel_simu", "Erel simulation", 6000, -10., 50);
-    fh_Erel_simu->GetXaxis()->SetTitle("Erel / MeV");
-    fh_Erel_simu->GetYaxis()->SetTitle("counts");
-
-    fh_dErel_vs_x = new TH2F("dErel_vs_x", "delta Erel vs. x", 200, -100., 100., 100, -5., 5.);
-    fh_dErel_vs_x->GetXaxis()->SetTitle("TofD x / cm");
-    fh_dErel_vs_x->GetYaxis()->SetTitle("Delta Erel / MeV");
-
-    fh_dErel_vs_y = new TH2F("dErel_vs_y", "delta Erel vs. y", 200, -100., 100., 100, -5., 5.);
-    fh_dErel_vs_y->GetXaxis()->SetTitle("TofD y / cm");
-    fh_dErel_vs_y->GetYaxis()->SetTitle("Delta Erel / MeV");
-
     // MDF tracker.
     if (tracker)
     {
         //Reconstruction of the target X coordinate
         MDF_X0 = new R3BMDFWrapper();
-        MDF_X0->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/MDF_X0_20200622.txt");
-        MDF_X0->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PCA_X0_20200622.txt");
+        MDF_X0->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/X0/MDF_X0_20200622.txt");
+        MDF_X0->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/X0/PCA_X0_20200622.txt");
+
+        //Reconstruction of the target X coordinate
+        MDF_TX0 = new R3BMDFWrapper();
+        MDF_TX0->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/TX0/MDF_TX0_20200622.txt");
+        MDF_TX0->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/TX0/PCA_TX0_20200622.txt");
+
+        //Reconstruction of the target X coordinate
+        MDF_PoQ = new R3BMDFWrapper();
+        MDF_PoQ->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/MDF_PoQ_20200622.txt");
+        MDF_PoQ->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/PCA_PoQ_20200622.txt");
+
+
     }
+
+    h_X0_mdf = new TH1F("h_X0_mdf","h_X0_mdf",1000,-20,20);
+    h_TX0_mdf = new TH1F("h_TX0_mdf","h_TX0_mdf",1000,-0.1,0.1);
+    h_PoQ_mdf = new TH1F("h_PoQ_mdf","h_PoQ_mdf",2000,1,3);
+
+    h_lab_xz = new TH2F("h_lab_xz","h_lab_xz",1000,0,800,1000,-500,500);
+    h_glob_track_mul = new TH1F("h_glob_track_mul","h_glob_track_mul",1000,0,1000);
 
     return kSUCCESS;
 }
@@ -729,20 +266,11 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             // cout << "spill stop" << endl;
         }
 
-        fh_Trigger->Fill(header->GetTrigger());
         //   check for requested trigger (Todo: should be done globablly / somewhere else)
         if ((fTrigger >= 0) && (header) && (header->GetTrigger() != fTrigger))
         {
             counterWrongTrigger++;
             return;
-        }
-
-        Int_t tpatbin;
-        for (int i = 0; i < 16; i++)
-        {
-            tpatbin = (header->GetTpat() & (1 << i));
-            if (tpatbin != 0)
-                fh_Tpat->Fill(i + 1);
         }
 
         // fTpat = 1-16; fTpat_bit = 0-15
@@ -796,19 +324,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                 ic_start = IC;
                 tofdor_start = TOFDOR;
             }
-
-            // IC:
-            Int_t yIC = IC - ic_start;
-            fh_IC->Fill(num_spills, yIC);
-
-            // SEETRAM:
-            Int_t ySEE = SEETRAM - see_start;
-            fh_SEE->Fill(num_spills, ySEE);
-            // Double_t ySEE_part = (SEETRAM-see_mem)*fNorm*1.e+3-see_offset*calib_SEE;
-
-            // TOFDOR:
-            Int_t yTOFDOR = TOFDOR - tofdor_start;
-            fh_TOFDOR->Fill(num_spills, yTOFDOR);
         }
     }//end if (fMappedItems.at(DET_BMON))
 
@@ -862,7 +377,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             // cout << "Califa: " << Crystal << " Energy: " << Energy << endl;
             if (Energy > 0)
             {
-                fh_califa_energy->Fill(Crystal, Energy);
                 CalifaHit = true;
             }
         }
@@ -989,7 +503,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
     if (nHits > 0)
     {
-        fh_tofd_mult->Fill(nHits);
         counterTofd++;
     }
 
@@ -1008,17 +521,14 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             continue;
 
         Double_t ttt = hitTofd->GetTime();
-        fh_tofd_time->Fill(ttt);
         if (fCuts && (ttt < -400. || ttt > -250.) && !fSimu) // trigger window -1500, 1500
             continue;
 
         Double_t qqq = hitTofd->GetEloss();
-        fh_tofd_charge->Fill(qqq);
 
         Double_t xxx = hitTofd->GetX();
         Double_t yyy = hitTofd->GetY();
         Double_t y_corr = 0.;
-        fh_xy_tofd->Fill(xxx, yyy);
         // first looking for the right charge
         if (fB == -1102 && !fSimu)
         {
@@ -1138,17 +648,14 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         }
         x2[det2] = hitTofd->GetX() / 100.;
         y2[det2] = hitTofd->GetY() / 100. + y_corr;
-        fh_xy_tofd_ac->Fill(x2[det2] * 100., y2[det2] * 100.);
 
         z2[det2] = 0.;
         q2[det2] = hitTofd->GetEloss();
-        fh_tofd_charge_ac->Fill(q2[det2]);
 
         // Achtung, ändern
         if (!fPairs)
             q2[det2] = 8.;
         t2[det2] = hitTofd->GetTime();
-        fh_tofd_time_ac->Fill(t2[det2]);
 
         // register hits for tracker as long a time is in the coincidence window
         if ((fabs(t2[det2] - t1[det1]) < 2.) || first)
@@ -1244,16 +751,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             q1[det] = 2.;
 
         tof = tStart - t1[det];
-
-        // Fill histograms before cuts
-        fh_Fib_ToF[det]->Fill(x1[det] * 100., tof);
-        fh_xy_Fib[det]->Fill(x1[det] * 100., y1[det] * 100.);
-        fh_mult_Fib[det]->Fill(nHits13);
-        fh_ToT_Fib[det]->Fill(x1[det] * 100., q1[det]);
-        fh_Fibs_vs_Tofd[det]->Fill(x1[tofd1r] * 100., x1[det] * 100.);
-        fh_Fib_vs_Events[det]->Fill(fNEvents, x1[det] * 100.);
-        fh_ToF_vs_Events[det]->Fill(fNEvents, tof);
-        fh_Fib_Time[det]->Fill(x1[det] * 100., t1[det]);
 
         LOG(DEBUG2) << "Fi13 bc: " << ihit13 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
             << " t1: " << t1[det] << endl;
@@ -1491,7 +988,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
     Int_t nHits3a = detHit3a->GetEntriesFast();
     LOG(DEBUG) << "Fi3a hits: " << nHits3a << endl;
     Int_t mult3a = 0;
-    fh_mult_Fib[fi3a]->Fill(nHits3a);
     for (Int_t ihit3a = 0; ihit3a < nHits3a; ihit3a++)
     {
         det = fi3a;
@@ -1554,7 +1050,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
     Int_t nHits3b = detHit3b->GetEntriesFast();
     LOG(DEBUG) << "Fi3b hits: " << nHits3b << endl;
     Int_t mult3b = 0;
-    fh_mult_Fib[fi3b]->Fill(nHits3b);
 
     for (Int_t ihit3b = 0; ihit3b < nHits3b; ihit3b++)
     {
@@ -1620,8 +1115,36 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
     if (tracker)
     {
         Double_t test[9];
-        
+
         TrackMDF(countdet, detector, qdet, xdet, ydet, zdet);
+
+        if(f10_hits.size()<10 
+                && f12_hits.size()<10 
+                && dtof_hits.size()>0
+                && f3a_hits.size()==0
+                && f3b_hits.size()==0
+          )
+            h_glob_track_mul->Fill(X0_data.size());
+
+
+        if(PoQ_data.size()==1)
+        {
+            for(auto & _poq_data : PoQ_data)
+            {
+                h_PoQ_mdf->Fill( _poq_data.value/ 1672. * 1482.);
+            }
+             for(auto & _x0_data : X0_data)
+            {
+                h_X0_mdf->Fill( _x0_data.value);
+            }
+
+             for(auto & _tx0_data : TX0_data)
+            {
+                h_TX0_mdf->Fill( _tx0_data.value);
+            }
+
+        }
+
 
 
         //for (Int_t i = 0; i < ndet; i++)
@@ -1678,8 +1201,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
 
         chi2 = chi[0] + chi[1];
-        fh_chiy_vs_chix->Fill(chi[0], chi[1]);
-        fh_chi2->Fill(chi2);
 
         if (chi[0] < 1.e10)
             counter3++;
@@ -1721,14 +1242,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                 if (qdet[i] > charge)
                     charge = qdet[i];
             }
-            // plot hits of the track
-            for (Int_t i = 0; i < ndet; i++)
-            {
-                fh_xy[i]->Fill(xTrack[i] * 100., yTrack[i] * 100.);
-                fh_p_vs_x[i]->Fill(xTrack[i] * 100., track[5]);
-                fh_p_vs_x_test[i]->Fill(xTrack[i] * 100.,
-                        sqrt(track[3] * track[3] + track[4] * track[4] + track[5] * track[5]));
-            }
 
             // store hits in track level
             new ((*fTrackItems)[fNofTrackItems++]) R3BTrack(
@@ -1744,99 +1257,13 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
 void R3BTrackS454_MDF::Output1(Double_t track[12], Double_t chi[6])
 {
-
-    pHex = track[3];
-    pHey = track[4];
-    pHez = track[5];
-
-    pCx = track[9];
-    pCy = track[10];
-    pCz = track[11];
-
-    LOG(DEBUG) << "He: " << pHex << "  " << pHey << "  " << pHez << endl;
-    LOG(DEBUG) << "C: " << pCx << "  " << pCy << "  " << pCz << endl;
-
-    fh_target_xy->Fill(track[0] * 100., track[1] * 100.);
-    fh_px_He->Fill(pHex);
-    fh_py_He->Fill(pHey);
-    fh_pz_He->Fill(pHez);
-
-    fh_px_C->Fill(pCx);
-    fh_py_C->Fill(pCy);
-    fh_pz_C->Fill(pCz);
-
-    // Calculate angle between alphs and C
-    if (pCz == 0 || pHez == 0)
-        return;
-
-    Double_t costh26 = (pHex * pCx + pHey * pCy + pHez * pCz) /
-        (sqrt(pHex * pHex + pHey * pHey + pHez * pHez) * sqrt(pCx * pCx + pCy * pCy + pCz * pCz));
-
-    Double_t theta_26 = acos(costh26) * 180. / 3.14159; // opening angle
-
-    fh_theta26->Fill(theta_26);
-
-    Double_t pHe = sqrt(pow(pHex, 2) + pow(pHey, 2) + pow(pHez, 2));
-    Double_t pC = sqrt(pow(pCx, 2) + pow(pCy, 2) + pow(pCz, 2));
-    Double_t eHe = sqrt(pow(pHe, 2) + pow(mHe, 2)) - mHe;
-    Double_t eC = sqrt(pow(pC, 2) + pow(mC, 2)) - mC;
-
-    fh_p_He->Fill(pHe);
-    fh_p_C->Fill(pC);
-
-    Double_t Erela =
-        sqrt(pow((mHe + mC + eHe + eC), 2) - pow(pHe, 2) - pow(pC, 2) - 2 * pHe * pC * cos(theta_26 * 3.1415 / 180.)) -
-        (mHe + mC); // Erel
-
-    Double_t m_inv = sqrt(mHe * mHe + mC * mC + 2. * sqrt(pC * pC + mC * mC) * sqrt(pHe * pHe + mHe * mHe) -
-            2. * pHe * pC * cos(theta_26 * 3.1415 / 180.));
-    Double_t Erelb = m_inv - mHe - mC;
-
-    fh_Erel->Fill(Erelb);
-    LOG(DEBUG) << "Theta 26: " << theta_26 << " Erel: " << Erela << " " << Erelb << endl;
 }
 
 void R3BTrackS454_MDF::Output2(Double_t track_parameter[12], Double_t chi_single_parameter[6])
 {
-    // compare
-
-    LOG(DEBUG) << "******************************************" << endl;
-    LOG(DEBUG) << "chi_sqingle_parameter " << chi_single_parameter[0] << "  " << chi_single_parameter[1] << endl;
-    LOG(DEBUG) << "xyz: " << track_parameter[0] * 100. << "  " << track_parameter[1] * 100. << "  "
-        << track_parameter[2] * 100. << endl;
-    LOG(DEBUG) << "p: " << track_parameter[3] << "  " << track_parameter[4] << "  " << track_parameter[5] << endl;
-    Double_t p_tot = sqrt(track_parameter[3] * track_parameter[3] + track_parameter[4] * track_parameter[4] +
-            track_parameter[5] * track_parameter[5]);
-
-    fh_target_xy->Fill(track_parameter[0] * 100., track_parameter[1] * 100.);
-    fh_target_px->Fill(track_parameter[3]);
-    fh_target_py->Fill(track_parameter[4]);
-    fh_target_pz->Fill(track_parameter[5]);
-    fh_target_p->Fill(p_tot);
-    fh_chi2->Fill(chi_single_parameter[0]);
-
-    // Comparison with simulation
-    Double_t thetax_simu = Pxf / Pzf * 1000.;
-    Double_t thetay_simu = Pyf / Pzf * 1000.;
-
-    fh_thetax_dpx->Fill((Pxf - track_parameter[3]) / Pxf * 100., thetax_simu);
-    fh_thetax_dpx_abs->Fill((Pxf - track_parameter[3]), thetax_simu);
-    fh_thetay_dpy->Fill((Pyf - track_parameter[4]) / Pyf * 100., thetay_simu);
-
-    fh_thetax_dpy->Fill((Pyf - track_parameter[4]) / Pyf * 100., thetax_simu);
-    fh_thetay_dpx->Fill((Pxf - track_parameter[3]) / Pxf * 100., thetay_simu);
-    fh_dpy_dpx->Fill((Pxf - track_parameter[3]) / Pxf * 100., (Pyf - track_parameter[4]) / Pyf * 100.);
-
-    fh_x_dpx->Fill((Pxf - track_parameter[3]) / Pxf * 100., Xf);
-    fh_y_dpy->Fill((Pyf - track_parameter[4]) / Pyf * 100., Yf);
-    fh_dx->Fill(Xf - track_parameter[0] * 100.);
-    fh_dy->Fill(Yf - track_parameter[1] * 100.);
-    fh_dz->Fill(Zf - track_parameter[2] * 100.);
-    fh_dpx->Fill((Pxf - track_parameter[3]) / Pxf * 100.);
-    fh_dpy->Fill((Pyf - track_parameter[4]) / Pyf * 100.);
-    fh_dpz->Fill((Pzf - track_parameter[5]) / Pzf * 100.);
-    fh_dp->Fill((Pf_tot - p_tot) / Pf_tot * 100.);
 }
+
+
 void R3BTrackS454_MDF::FinishEvent()
 {
 
@@ -1873,121 +1300,13 @@ void R3BTrackS454_MDF::FinishTask()
     cout << "TofD multi: " << counterTofdMulti << endl;
     cout << "Tracker: " << counterTracker << endl;
 
-    fh_Tpat->Write();
-    fh_Trigger->Write();
-    fh_Cave_position->Write();
-    fh_TOFDOR->Write();
-    fh_SEE->Write();
-    fh_IC->Write();
+    h_X0_mdf->Write();
+    h_TX0_mdf->Write();
+    h_PoQ_mdf->Write();
+    h_lab_xz->Write();
+    h_glob_track_mul->Write();
 
-    fh_target_xy->Write();
-    fh_target_px->Write();
-    fh_target_py->Write();
-    fh_target_pz->Write();
-    fh_target_p->Write();
 
-    fh_px_He->Write();
-    fh_py_He->Write();
-    fh_pz_He->Write();
-    fh_p_He->Write();
-    fh_px_C->Write();
-    fh_py_C->Write();
-    fh_pz_C->Write();
-    fh_p_C->Write();
-
-    fh_chi2->Write();
-
-    fh_dx->Write();
-    fh_dy->Write();
-    fh_dz->Write();
-    fh_dpx->Write();
-    fh_dpy->Write();
-    fh_dpz->Write();
-    fh_dp->Write();
-    fh_thetax_dpx->Write();
-    fh_thetax_dpx_abs->Write();
-    fh_thetay_dpy->Write();
-    fh_thetax_dpy->Write();
-    fh_thetay_dpx->Write();
-    fh_x_dpx->Write();
-    fh_y_dpy->Write();
-    fh_dpy_dpx->Write();
-
-    if (fMappedItems.at(DET_CALIFA))
-    {
-        fh_califa_energy->Write();
-    }
-
-    if (fHitItems.at(DET_TOFD))
-    {
-        fh_xy_tofd->Write();
-        fh_xy_tofd_ac->Write();
-        fh_tofd_charge->Write();
-        fh_tofd_charge_ac->Write();
-        fh_TimePreviousEvent->Write();
-        fh_tofd_time->Write();
-        fh_tofd_time_ac->Write();
-        fh_tofd_mult->Write();
-        fh_tofd_mult_ac->Write();
-        fh_tofd_q2_vs_q1->Write();
-        fh_tofd_q2_vs_q1_ac->Write();
-    }
-
-    for (Int_t ifibcount = 0; ifibcount < NOF_FIB_DET; ifibcount++)
-    {
-        if (fCalItems.at(ifibcount + DET_FI_FIRST) || fHitItems.at(ifibcount + DET_FI_FIRST))
-        {
-            fh_xy_Fib[ifibcount]->Write();
-            fh_xy_Fib_ac[ifibcount]->Write();
-            fh_mult_Fib[ifibcount]->Write();
-            fh_mult_Fib_ac[ifibcount]->Write();
-            fh_ToT_Fib[ifibcount]->Write();
-            fh_ToT_Fib_ac[ifibcount]->Write();
-            fh_Fib_vs_Events[ifibcount]->Write();
-            fh_Fib_vs_Events_ac[ifibcount]->Write();
-            fh_Fibs_vs_Tofd[ifibcount]->Write();
-            fh_Fibs_vs_Tofd_ac[ifibcount]->Write();
-            fh_Fib_ToF[ifibcount]->Write();
-            fh_Fib_ToF_ac[ifibcount]->Write();
-            fh_ToF_vs_Events[ifibcount]->Write();
-            fh_ToF_vs_Events_ac[ifibcount]->Write();
-            fh_Fib_Time[ifibcount]->Write();
-            fh_Fib_Time_ac[ifibcount]->Write();
-        }
-    }
-
-    fh_Fib13_vs_Fib11->Write();
-    fh_Fib13_vs_Fib11_dx->Write();
-    fh_Fib11_vs_Fib3a->Write();
-    fh_Fib11_vs_Fib3a_dx->Write();
-    fh_Fib10_vs_Fib12->Write();
-    fh_Fib10_vs_Fib12_dx->Write();
-    fh_Fib12_vs_Fib3b->Write();
-    fh_Fib12_vs_Fib3b_dx->Write();
-
-    fh_Fib13_vs_Fib11_back->Write();
-    fh_Fib13_vs_Fib11_dx_back->Write();
-    fh_Fib11_vs_Fib3a_back->Write();
-    fh_Fib11_vs_Fib3a_dx_back->Write();
-    fh_Fib10_vs_Fib12_back->Write();
-    fh_Fib10_vs_Fib12_dx_back->Write();
-    fh_Fib12_vs_Fib3b_back->Write();
-    fh_Fib12_vs_Fib3b_dx_back->Write();
-
-    fh_theta26->Write();
-    fh_Erel->Write();
-    fh_theta26_simu->Write();
-    fh_Erel_simu->Write();
-    fh_chiy_vs_chix->Write();
-    fh_dErel_vs_x->Write();
-    fh_dErel_vs_y->Write();
-
-    for (Int_t i = 0; i < ndet; i++)
-    {
-        fh_xy[i]->Write();
-        fh_p_vs_x[i]->Write();
-        fh_p_vs_x_test[i]->Write();
-    }
 }
 
 void R3BTrackS454_MDF::Detector_Hit::Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Int_t _q, Int_t _det)
@@ -2007,11 +1326,16 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
     f13_hits.clear();
     dtof_hits.clear();
 
-    //MDF vectors
+    //MDF data vectors
     X0_data.clear();
+    TX0_data.clear();
+    PoQ_data.clear();
 
+    //Temporary containers
     Detector_Hit det_hit;
     MDF_Data_X0 X0;
+    MDF_Data_TX0 TX0;
+    MDF_Data_PoQ PoQ;
 
     double Angle = 17.7 * TMath::Pi()/180.;//Central turning angle from Daniel
     double Z0 = 277.7; //cm from target middle to the central turning point in GLAD
@@ -2048,7 +1372,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
             det_hit.Set_XYZQ(
                     xd[i]*100.*TMath::Cos(Angle) - 119.3 + fib_halfwidth * TMath::Cos(Angle),
                     yd[i],
-                    0. - xd[i]*100. * TMath::Sin(Angle) + 660.2 + fib_halfwidth * TMath::Sin(Angle) ,
+                    0. + xd[i]*100. * TMath::Sin(Angle) + 660.2 + fib_halfwidth * TMath::Sin(Angle) ,
                     qd[i], det[i]);
 
             f10_hits.push_back(det_hit);
@@ -2068,7 +1392,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
             det_hit.Set_XYZQ(
                     xd[i]*100.*TMath::Cos(Angle) - 92.4 + fib_halfwidth * TMath::Cos(Angle),
                     yd[i],
-                    0. - xd[i] * 100. * TMath::Sin(Angle) + 575.5 + fib_halfwidth * TMath::Sin(Angle) ,
+                    0. + xd[i] * 100. * TMath::Sin(Angle) + 575.5 + fib_halfwidth * TMath::Sin(Angle) ,
                     qd[i], det[i]);
             f12_hits.push_back(det_hit);
         }
@@ -2098,26 +1422,82 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
 
     //Now actual tracking
     if(f12_hits.size()==0 || f10_hits.size()==0 
-            //|| f12_hits.size()>3 || f10_hits.size()>3 
+            || f12_hits.size()>4 || f10_hits.size()>4
+            || dtof_hits.size()==0
             || f3a_hits.size()!=0 || f3b_hits.size()!=0) return;
+
+
+    bool is_used_combo;
 
     //cout << "\n\nNew event ******************************" << endl;
     for(auto & _hit_f12 : f12_hits)
     {
         for(auto & _hit_f10 : f10_hits)
         {
-            X0.edata[0] = 0; // TX0 value for unreacted beam
+            is_used_combo=false;
+
+            //==== Tracking X0 coordiante (target X position) ========
+            X0.edata[0] = 0.; // TX0 value for unreacted beam
             X0.edata[1] = _hit_f12.X;
             X0.edata[2] = _hit_f12.Z;
             X0.edata[3] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
-
-            MDF_X0->X2P(X0.edata,  X0.pdata);
+            MDF_X0->X2P(X0.edata, X0.pdata);
             X0.value = MDF_X0->MDF(X0.pdata);
+
+            //==== Tracking TX0 angle from the target ========
+            TX0.edata[0] = X0.value;//X0
+            TX0.edata[1] = 0.;//Z0
+            TX0.edata[2] = _hit_f12.X;
+            TX0.edata[3] = _hit_f12.Z;
+            TX0.edata[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
+            MDF_TX0->X2P(TX0.edata, TX0.pdata);
+            TX0.value = MDF_TX0->MDF(TX0.pdata);
+           
+           //==== Repeat X0 after tracking ========
+            X0.edata[0] = TX0.value; // TX0 value for unreacted beam
+            MDF_X0->X2P(X0.edata, X0.pdata);
+            X0.value = MDF_X0->MDF(X0.pdata);
+
+          //==== Repeat TX0 angle from the target ========
+            TX0.edata[0] = X0.value;//X0
+            MDF_TX0->X2P(TX0.edata, TX0.pdata);
+            TX0.value = MDF_TX0->MDF(TX0.pdata);
+         
+            //==== Repeat X0 after tracking ========
+            X0.edata[0] = TX0.value; // TX0 value for unreacted beam
+            MDF_X0->X2P(X0.edata, X0.pdata);
+            X0.value = MDF_X0->MDF(X0.pdata);
+
+            //==== Tracking PoQ from the target ========
+            PoQ.edata[0] = X0.value;//X0
+            PoQ.edata[1] = 0.;//Z0
+            PoQ.edata[2] = _hit_f12.X;
+            PoQ.edata[3] = _hit_f12.Z;
+            PoQ.edata[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
+            MDF_PoQ->X2P(PoQ.edata, PoQ.pdata);
+            PoQ.value = MDF_PoQ->MDF(PoQ.pdata);
+
+            if(X0.value < (0.622-5*0.26) || 
+                    X0.value > (0.622+5*0.26) || 
+                    TX0.value < (0.0022-5*0.001) || 
+                    TX0.value > (0.0022+5*0.001)
+              ) continue; 
+
+            //if(is_used_combo) continue;
+
+            TX0_data.push_back(TX0);
             X0_data.push_back(X0);
+            PoQ_data.push_back(PoQ);
+
+            //====== Filling data to the histrograms =======
+            //h_X0_mdf->Fill(X0.value);
+            //h_TX0_mdf->Fill(TX0.value);
+
+            h_lab_xz->Fill(_hit_f12.Z, _hit_f12.X);
+            h_lab_xz->Fill(_hit_f10.Z, _hit_f10.X);
             //cout << "\n\tReconstructed X0 = " << X0.value;
         }
     }
-
     return;
 }
 
