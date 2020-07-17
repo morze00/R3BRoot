@@ -209,26 +209,77 @@ InitStatus R3BTrackS454_MDF::Init()
         MDF_TX0->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/TX0/MDF_TX0_20200622.txt");
         MDF_TX0->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/TX0/PCA_TX0_20200622.txt");
 
-        //Reconstruction of the target X coordinate
         MDF_PoQ = new R3BMDFWrapper();
-        MDF_PoQ->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/MDF_PoQ_20200622.txt");
-        MDF_PoQ->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/PCA_PoQ_20200622.txt");
+        //Reconstruction of the PoQ (produciton runs)
+        
+        //Reconstruction of the PoQ (production runa, I=1672A)
+        if(fB == -1672)
+        {
+            MDF_PoQ->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/MDF_PoQ_1672A_20200622.txt");
+            MDF_PoQ->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/PCA_PoQ_1672A_20200622.txt");
+        }
 
+        //Reconstruction of the PoQ (run 395, I=1102A)
+        if(fB == -1102)
+        {
+            MDF_PoQ->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/MDF_PoQ_1102A_20200713.txt");
+            MDF_PoQ->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/PCA_PoQ_1102A_20200713.txt");
+        }
+
+        //Reconstruction of the PoQ (run 391, I=1292A)
+        if(fB == -1292)
+        {
+            MDF_PoQ->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/MDF_PoQ_1292A_20200713.txt");
+            MDF_PoQ->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/PCA_PoQ_1292A_20200713.txt");
+        }
+
+        //Reconstruction of the PoQ (run 389, I=1482A)
+        if(fB == -1482)
+        {
+            MDF_PoQ->InitMDF("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/MDF_PoQ_1482A_20200713.txt");
+            MDF_PoQ->InitPCA("/Users/vpanin/r3broot/my_codes/s454_ana/MDF_params/PoQ/PCA_PoQ_1482A_20200713.txt");
+        }
 
     }
 
     h_X0_mdf = new TH1F("h_X0_mdf","h_X0_mdf",1000,-20,20);
-    h_TX0_mdf = new TH1F("h_TX0_mdf","h_TX0_mdf",1000,-0.1,0.1);
-    h_PoQ_mdf = new TH1F("h_PoQ_mdf","h_PoQ_mdf",2000,1,3);
+    h_TX0_mdf = new TH1F("h_TX0_mdf","h_TX0_mdf",4000,-0.01,0.01);
+    h_PoQ_mdf = new TH1F("h_PoQ_mdf","h_PoQ_mdf",10000,2,2.5);
 
-    h_lab_xz = new TH2F("h_lab_xz","h_lab_xz",1000,0,800,1000,-500,500);
-    h_glob_track_mul = new TH1F("h_glob_track_mul","h_glob_track_mul",1000,0,1000);
+    h_lab_xz = new TH2F("h_lab_xz","h_lab_xz",10000,0,800,10000,-500,500);
+    h_glob_track_mul = new TH1F("h_glob_track_mul","h_glob_track_mul",100,0,100);
+    h_glob_track_mul_corr = new TH2F("h_glob_track_mul_corr","h_glob_track_mul_corr",100,0,100,100,0,100);
+
+    h_fib10_tof = new TH1F("h_fib10_tof","h_fib10_tof",1000,-20,20);
+    h_fib12_tof = new TH1F("h_fib12_tof","h_fib12_tof",1000,-20,20);
+    h_fib12_10_tof = new TH1F("h_fib12_10_tof","h_fib12_10_tof",1000,-40,40);
+
+    h_fib10_q = new TH1F("h_fib10_q","h_fib10_q",1000,0,20);
+    h_fib12_q = new TH1F("h_fib12_q","h_fib12_q",1000,0,20);
+
+    h_fib10_x = new TH1F("h_fib10_x","h_fib10_x",2000,-120,0);
+    h_fib12_x = new TH1F("h_fib12_x","h_fib12_x",2000,-120,0);
+
+    h_tofd7_q = new TH1F("h_tofd7_q","h_tofd7_q",1000,0,20);
+    h_tofd9_q = new TH1F("h_tofd9_q","h_tofd9_q",1000,0,20);
+
+    is_init_out =false;
+    tree_out.SetName("tree_out");
+    tree_out.Branch("f10_X",     &f10_X,  "f10_X/D");
+    tree_out.Branch("f12_X",     &f12_X,  "f12_X/D");
+    tree_out.Branch("Current",     &Current,  "Current/I");
 
     return kSUCCESS;
 }
 
 void R3BTrackS454_MDF::Exec(Option_t* option)
 {
+    if(!is_init_out)
+    {
+        //tree_out = new TTree("tree_out","tree_out"); 
+        is_init_out = true;
+    }
+
     if (fNEvents / 10000. == (int)fNEvents / 10000)
         std::cout << "\rEvents: " << fNEvents << " / " << maxevent << " (" << (int)(fNEvents * 100. / maxevent)
             << " %) "
@@ -395,7 +446,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
     Double_t ydet[max];
     Double_t zdet[max];
     Double_t tdet[max];
-    Int_t qdet[max];
+    Double_t qdet[max];
 
     countdet = 0;
 
@@ -471,6 +522,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         qMax[i] = -1000.;
         tMax[i] = -1000.;
     }
+
     // is also number of ifibcount
     Int_t fi3a = 0;
     Int_t fi3b = 1;
@@ -486,7 +538,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
     Double_t tof = 0.;
     Bool_t single = false;
-    Double_t tStart = 0.;
+    Double_t tStart = -1e9;
     Bool_t first = true;
     Bool_t alpha = false;
     Bool_t carbon = false;
@@ -521,14 +573,14 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             continue;
 
         Double_t ttt = hitTofd->GetTime();
-        if (fCuts && (ttt < -400. || ttt > -250.) && !fSimu) // trigger window -1500, 1500
+        if (fCuts && (ttt < -100. || ttt > 100.) && !fSimu) // trigger window -1500, 1500
             continue;
 
         Double_t qqq = hitTofd->GetEloss();
-
         Double_t xxx = hitTofd->GetX();
         Double_t yyy = hitTofd->GetY();
         Double_t y_corr = 0.;
+
         // first looking for the right charge
         if (fB == -1102 && !fSimu)
         {
@@ -600,6 +652,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             if (xxx >= -47. && xxx < -46.)
                 y_corr = 0.04;
         }
+
         if (fB == -1672)
         {
 
@@ -612,15 +665,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             y_corr = 0.0;
         }
 
-        for (int i = 0; i < n_det; i++)
-        {
-            xMax[i] = -1000.;
-            yMax[i] = -1000.;
-            zMax[i] = -1000.;
-            qMax[i] = -1000.;
-            tMax[i] = -1000.;
-        }
-
+        //======= Determine which TOFD is hit ========
         id2 = hitTofd->GetDetId();
         if (hitTofd->GetX() / 100. <= 0.)
         {
@@ -646,16 +691,16 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
                 det2 = tofd2l;
             }
         }
+
         x2[det2] = hitTofd->GetX() / 100.;
         y2[det2] = hitTofd->GetY() / 100. + y_corr;
-
         z2[det2] = 0.;
         q2[det2] = hitTofd->GetEloss();
+        t2[det2] = hitTofd->GetTime();
 
         // Achtung, ändern
-        if (!fPairs)
-            q2[det2] = 8.;
-        t2[det2] = hitTofd->GetTime();
+        //if (!fPairs)
+        //    q2[det2] = 8.;
 
         // register hits for tracker as long a time is in the coincidence window
         if ((fabs(t2[det2] - t1[det1]) < 2.) || first)
@@ -665,15 +710,23 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xdet[countdet] = x2[det2];
             ydet[countdet] = y2[det2];
             zdet[countdet] = z2[det2];
-            qdet[countdet] = (int)(q2[det2] + 0.5);
+            //qdet[countdet] = (int)(q2[det2] + 0.5);
+            qdet[countdet] = q2[det2];
+            tdet[countdet] = t2[det2];
+
+            countdet++;
+
+            if(det2==7) tStart = t2[det2];
+
             if (fabs(qdet[countdet] - 2.) < 0.5)
                 alpha = true;
             if (fabs(qdet[countdet] - 6.) < 0.5)
                 carbon = true;
-            countdet++;
+
             single = true;
             first = false;
-            tStart = t2[det2];
+            
+
 
             det1 = det2;
             x1[det1] = x2[det2];
@@ -714,14 +767,13 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
         counterTofdMulti++;
 
-    }// end loop on TofD hits
-
-
+    }//=========================== end loop on TofD hits ========================
     if(multTofd==0) return;
 
     // cut in ToT for Fibers
     Bool_t maxWerte = false;
     Double_t cutQ = 0.;
+
     if (!fPairs || fB != -1672)
         cutQ = 4.;
 
@@ -738,38 +790,32 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         det = fi13;
         R3BBunchedFiberHitData* hit13 = (R3BBunchedFiberHitData*)detHit13->At(ihit13);
         x1[det] = hit13->GetX() / 100.;
-        y1[det] = 0.; // hit13->GetY() / 100.;
+        y1[det] = hit13->GetY() / 100.;
         z1[det] = 0.;
         q1[det] = hit13->GetEloss();
         t1[det] = hit13->GetTime();
-
-        if (q1[det] > 9.)
-            q1[det] = 8.;
-        else if (q1[det] > 4.)
-            q1[det] = 6.;
-        else if (q1[det] > 0.)
-            q1[det] = 2.;
-
         tof = tStart - t1[det];
 
         LOG(DEBUG2) << "Fi13 bc: " << ihit13 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
             << " t1: " << t1[det] << endl;
 
-        // Cuts on Fi13
-        //            if (fCuts && x1[det] * 100. < -24.5)
-        //                continue;
-        //            if (fCuts && y1[det] * 100. < -100.)
-        //                continue;
+        //-------------------- Set Cuts -----------------------
+        
+        if (fCuts && x1[det] * 100. < -24.4)
+            continue;
+
+        if (fCuts && (tof < -20 || tof > 20))
+            continue;
+
+        if (fCuts && y1[det] < -100.)
+            continue;
+
         //if (fCuts && !fPairs && q1[det] < cutQ)
         //    continue;
-        //if (fCuts && (tof < -40 || tof > 20))
-        //   continue;
         //if (fGraphCuts && !cut_Fi13vsTofd->IsInside(x1[tofd1r] * 100., x1[det] * 100.))
         //    continue;
 
         mult13++;
-        //if (mult13 > 10)
-        //  continue;
 
         if (q1[det] > qMax[det])
         {
@@ -777,21 +823,34 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xMax[det] = x1[det];
             yMax[det] = y1[det];
             zMax[det] = z1[det];
-            tMax[det] = t1[det];
+            //tMax[det] = t1[det];
+            tMax[det] = tof;
         }
 
-        LOG(DEBUG2) << "Fi13: " << ihit13 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-            << " t1: " << t1[det] << endl;
         if (!maxWerte)
         {
             detector[countdet] = det;
-            xdet[countdet] = x1[det];
+            xdet[countdet] = x1[det];// + gRandom->Uniform(-0.00025, 0.00025);
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
+            //tdet[countdet] = t1[det];
+            tdet[countdet] = tof;
             countdet++;
         }
     }
+
+    if (maxWerte && mult13>0)
+    {
+        detector[countdet] = det;
+        xdet[countdet] = xMax[det];// + gRandom->Uniform(-0.00025, 0.00025);
+        ydet[countdet] = yMax[det];
+        zdet[countdet] = zMax[det];
+        qdet[countdet] = qMax[det];
+        tdet[countdet] = tMax[det];
+        countdet++;
+    }
+
 
     //===========================================================================
     // loop over fiber 11
@@ -804,36 +863,32 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         det = fi11;
         R3BBunchedFiberHitData* hit11 = (R3BBunchedFiberHitData*)detHit11->At(ihit11);
         x1[det] = hit11->GetX() / 100.;
-        y1[det] = 0.; // hit11->GetY() / 100.;
+        y1[det] = hit11->GetY() / 100.;
         z1[det] = 0.;
         q1[det] = hit11->GetEloss();
         t1[det] = hit11->GetTime();
-
-        if (q1[det] > 9.)
-            q1[det] = 8.;
-        else if (q1[det] > 4.)
-            q1[det] = 6.;
-        else if (q1[det] > 0.)
-            q1[det] = 2.;
-
         tof = tStart - t1[det];
 
         LOG(DEBUG2) << "Fi11 bc: " << ihit11 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
             << " t1: " << t1[det] << endl;
 
-        // Cuts on Fi11
-        //            if (fCuts && x1[det] * 100. <- 24.4)
-        //                continue;
-        //            if (fCuts && y1[det] * 100. < -100.)
-        //                continue;
+        //-------------------- Set Cuts -----------------------
+        
+        if (fCuts && x1[det] * 100. < -24.4)
+            continue;
+
+        if (fCuts && (tof < -20 || tof > 20))
+            continue;
+
+        if (fCuts && y1[det] < -100.)
+            continue;
+
         //if (fCuts && !fPairs && q1[det] < cutQ)
         //    continue;
-        //if (fCuts && (tof < -40 || tof > 20))
+        //if (fGraphCuts && !cut_Fi13vsTofd->IsInside(x1[tofd1r] * 100., x1[det] * 100.))
         //    continue;
 
         mult11++;
-        //if (mult11 > 10)
-        //    continue;
 
         if (q1[det] > qMax[det])
         {
@@ -841,7 +896,8 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xMax[det] = x1[det];
             yMax[det] = y1[det];
             zMax[det] = z1[det];
-            tMax[det] = t1[det];
+            //tMax[det] = t1[det];
+            tMax[det] = tof;
         }
 
         LOG(DEBUG2) << "Fi11: " << ihit11 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
@@ -850,13 +906,26 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         if (!maxWerte)
         {
             detector[countdet] = det;
-            xdet[countdet] = x1[det];
+            xdet[countdet] = x1[det];// + gRandom->Uniform(-0.00025, 0.00025);
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
+            //tdet[countdet] = t1[det];
+            tdet[countdet] = tof;
             countdet++;
         }
     }
+    if (maxWerte && mult11>0)
+    {
+        detector[countdet] = det;
+        xdet[countdet] = xMax[det];// + gRandom->Uniform(-0.00025, 0.00025);
+        ydet[countdet] = yMax[det];
+        zdet[countdet] = zMax[det];
+        qdet[countdet] = qMax[det];
+        tdet[countdet] = tMax[det];
+        countdet++;
+    }
+
 
     //===========================================================================
     // loop over fiber 10
@@ -869,33 +938,32 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         det = fi10;
         R3BBunchedFiberHitData* hit10 = (R3BBunchedFiberHitData*)detHit10->At(ihit10);
         x1[det] = hit10->GetX() / 100.;
-        y1[det] = 0.; // hit10->GetY() / 100.;
+        y1[det] = hit10->GetY() / 100.;
         z1[det] = 0.;
         q1[det] = hit10->GetEloss();
         t1[det] = hit10->GetTime();
-
-        if (q1[det] > 9.)
-            q1[det] = 8.;
-        else if (q1[det] > 4.)
-            q1[det] = 6.;
-        else if (q1[det] > 0.)
-            q1[det] = 2.;
-
         tof = tStart - t1[det];
+    
+        LOG(DEBUG2) << "Fi10: " << ihit10 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
+            << " t1: " << t1[det] << endl;
 
-        // Cuts on Fi10
+        //-------------------- Set Cuts -----------------------
+        
+        if (fCuts && x1[det] * 100. < -24.4)
+            continue;
+
+        if (fCuts && (tof < -20 || tof > 20))
+            continue;
+
+        if (fCuts && y1[det] < -100.)
+            continue;
+
         //if (fCuts && !fPairs && q1[det] < cutQ)
         //    continue;
-        //            if (fCuts && x1[det] * 100. < -24.1)
-        //                continue;
-        //            if (fCuts && y1[det] * 100. < -100.)
-        //                continue;
-        //if (fCuts && (tof < -40 || tof > 20))
+        //if (fGraphCuts && !cut_Fi13vsTofd->IsInside(x1[tofd1r] * 100., x1[det] * 100.))
         //    continue;
 
-        //mult10++;
-        //if (mult10 > 10)
-        //    continue;
+        mult10++;
 
         if (q1[det] > qMax[det])
         {
@@ -903,22 +971,33 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xMax[det] = x1[det];
             yMax[det] = y1[det];
             zMax[det] = z1[det];
-            tMax[det] = t1[det];
+            //tMax[det] = t1[det];
+            tMax[det] = tof;
         }
-
-        LOG(DEBUG2) << "Fi10: " << ihit10 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-            << " t1: " << t1[det] << endl;
 
         if (!maxWerte)
         {
             detector[countdet] = det;
-            xdet[countdet] = x1[det];
+            xdet[countdet] = x1[det];//+ gRandom->Uniform(-0.0005, 0.0005);
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
+            //tdet[countdet] = t1[det];
+            tdet[countdet] = tof;
             countdet++;
         }
     }
+    if (maxWerte && mult10>0)
+    {
+        detector[countdet] = det;
+        xdet[countdet] = xMax[det];//+ gRandom->Uniform(-0.0005, 0.0005);
+        ydet[countdet] = yMax[det];
+        zdet[countdet] = zMax[det];
+        qdet[countdet] = qMax[det];
+        tdet[countdet] = tMax[det];
+        countdet++;
+    }
+
 
     //===========================================================================
     // loop over fiber 12
@@ -931,33 +1010,33 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         det = fi12;
         R3BBunchedFiberHitData* hit12 = (R3BBunchedFiberHitData*)detHit12->At(ihit12);
         x1[det] = hit12->GetX() / 100.;
-        y1[det] = 0.; // hit12->GetY() / 100.;
+        y1[det] = hit12->GetY() / 100.;
         z1[det] = 0.;
         q1[det] = hit12->GetEloss();
         t1[det] = hit12->GetTime();
-
-        if (q1[det] > 9.)
-            q1[det] = 8.;
-        else if (q1[det] > 4.)
-            q1[det] = 6.;
-        else if (q1[det] > 0.)
-            q1[det] = 2.;
-
         tof = tStart - t1[det];
+        
+        LOG(DEBUG2) << "Fi12: " << ihit12 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
+            << " t1: " << t1[det] << endl;
 
-        // Cuts on Fi12
+
+        //-------------------- Set Cuts -----------------------
+        
+        if (fCuts && x1[det] * 100. < -24.4)
+            continue;
+
+        if (fCuts && (tof < -20 || tof > 20))
+            continue;
+
+        if (fCuts && y1[det] < -100.)
+            continue;
+        
         //if (fCuts && !fPairs && q1[det] < cutQ)
-        //   continue;
-        //            if (fCuts && x1[det] * 100. < -24.4)
-        //                continue;
-        //            if (fCuts && y1[det] * 100. < -100.)
-        //                continue;
-        //if (fCuts && (tof < -40 || tof > 20))
+        //    continue;
+        //if (fGraphCuts && !cut_Fi13vsTofd->IsInside(x1[tofd1r] * 100., x1[det] * 100.))
         //    continue;
 
         mult12++;
-        //if (mult12 > 10)
-        //    continue;
 
         if (q1[det] > qMax[det])
         {
@@ -965,22 +1044,33 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             xMax[det] = x1[det];
             yMax[det] = y1[det];
             zMax[det] = z1[det];
-            tMax[det] = t1[det];
+            //tMax[det] = t1[det];
+            tMax[det] = tof;
         }
 
-        LOG(DEBUG2) << "Fi12: " << ihit12 << " x1: " << x1[det] << " y1: " << y1[det] << " q1: " << q1[det]
-            << " t1: " << t1[det] << endl;
-
-        if (!maxWerte)
+               if (!maxWerte)
         {
             detector[countdet] = det;
-            xdet[countdet] = x1[det];
+            xdet[countdet] = x1[det];// + gRandom->Uniform(-0.0005, 0.0005);
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
+            //tdet[countdet] = t1[det];
+            tdet[countdet] = tof;
             countdet++;
         }
     }
+    if (maxWerte && mult12>0)
+    {
+        detector[countdet] = det;
+        xdet[countdet] = xMax[det];//+ gRandom->Uniform(-0.0005, 0.0005);
+        ydet[countdet] = yMax[det];
+        zdet[countdet] = zMax[det];
+        qdet[countdet] = qMax[det];
+        tdet[countdet] = tMax[det];
+        countdet++;
+    }
+
 
     //===========================================================================
     // loop over fiber 3a
@@ -1040,9 +1130,21 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
+            tdet[countdet] = t1[det];
             countdet++;
         }
     }
+    if (maxWerte && mult3a>0)
+    {
+        detector[countdet] = det;
+        xdet[countdet] = xMax[det];
+        ydet[countdet] = yMax[det];
+        zdet[countdet] = zMax[det];
+        qdet[countdet] = qMax[det];
+        tdet[countdet] = tMax[det];
+        countdet++;
+    }
+
 
     //===========================================================================
     // loop over fiber 3b
@@ -1087,6 +1189,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         if (q1[det] > qMax[det])
         {
             qMax[det] = q1[det];
+
             xMax[det] = x1[det];
             yMax[det] = y1[det];
             zMax[det] = z1[det];
@@ -1103,61 +1206,87 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
+            tdet[countdet] = t1[det];
             countdet++;
         }
     }
+    if (maxWerte && mult3b>0)
+    {
+        detector[countdet] = det;
+        xdet[countdet] = xMax[det];
+        ydet[countdet] = yMax[det];
+        zdet[countdet] = zMax[det];
+        qdet[countdet] = qMax[det];
+        tdet[countdet] = tMax[det];
+        countdet++;
+    }
 
-    //===========================================================================
-    // here call tracker
+    //===============================================================
+    // Tracker
     chi2 = 1.E100;
     counter2++;
+
+    //Dummy values fo for the output tree
+    f10_X = -9999.;
+    f12_X = -9999.;
+    Current =0;
 
     if (tracker)
     {
         Double_t test[9];
+        if(mult10>0 //&& mult10<20
+                && mult12>0// && mult12<20
+                && mult11 ==0 && mult13==0
+                && mult3a ==0 && mult3b==0
+          )
+        {
+            TrackMDF(countdet, detector, qdet, tdet, xdet, ydet, zdet);
+            if(PoQ_data.size()==1)
+            {
+                for(auto & _poq_data : PoQ_data)
+                {
+                    h_PoQ_mdf->Fill( _poq_data.value);
+                    h_lab_xz->Fill(_poq_data.f10_hit.Z, _poq_data.f10_hit.X);
+                    h_lab_xz->Fill(_poq_data.f12_hit.Z, _poq_data.f12_hit.X);
 
-        TrackMDF(countdet, detector, qdet, xdet, ydet, zdet);
+                    h_fib10_tof->Fill(_poq_data.f10_hit.T);
+                    h_fib12_tof->Fill(_poq_data.f12_hit.T);
+                    h_fib12_10_tof->Fill(_poq_data.f12_hit.T - _poq_data.f10_hit.T);
 
-        if(f10_hits.size()<10 
-                && f12_hits.size()<10 
+                    h_fib10_q->Fill(_poq_data.f10_hit.Q);
+                    h_fib12_q->Fill(_poq_data.f12_hit.Q);
+                    
+                    h_fib10_x->Fill(_poq_data.f10_hit.X);
+                    h_fib12_x->Fill(_poq_data.f12_hit.X);
+
+                    //Fill output tree for alignment
+                    f10_X = _poq_data.f10_hit.Xdet;
+                    f12_X = _poq_data.f12_hit.Xdet;
+                    Current = fB;
+                    tree_out.Fill();
+
+                }
+                for(auto & _x0_data : X0_data)
+                    h_X0_mdf->Fill( _x0_data.value);
+
+                for(auto & _tx0_data : TX0_data)
+                    h_TX0_mdf->Fill( _tx0_data.value);
+            }
+        }
+
+        if(f10_hits.size()>0 
+                && f12_hits.size()>0 
                 && dtof_hits.size()>0
                 && f3a_hits.size()==0
                 && f3b_hits.size()==0
           )
-            h_glob_track_mul->Fill(X0_data.size());
-
-
-        if(PoQ_data.size()==1)
         {
-            for(auto & _poq_data : PoQ_data)
-            {
-                h_PoQ_mdf->Fill( _poq_data.value/ 1672. * 1482.);
-            }
-             for(auto & _x0_data : X0_data)
-            {
-                h_X0_mdf->Fill( _x0_data.value);
-            }
 
-             for(auto & _tx0_data : TX0_data)
-            {
-                h_TX0_mdf->Fill( _tx0_data.value);
-            }
-
+            h_glob_track_mul->Fill(X0_data.size());
+            h_glob_track_mul_corr->Fill(X0_data.size(), (f12_hits.size() * f10_hits.size()));
         }
 
 
-
-        //for (Int_t i = 0; i < ndet; i++)
-        //{
-        //    LOG(DEBUG2) << "Max Det: " << i << " max x: " << xMax[i] << " max y: " << yMax[i]
-        //        << " max q: " << qMax[i] << endl;
-        //}
-
-        //for (Int_t i = 0; i < countdet; i++)
-        //{
-        //    LOG(DEBUG2) << "Det: " << detector[i] << " x: " << xMax[i] << " max y: " << yMax[i]
-        //        << " max q: " << qMax[i] << endl;
-        //}
 
         Bool_t det_coord = true;
 
@@ -1196,8 +1325,6 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         //        << "\tf12.Z = " << _hit.Z << "\tf12.Q = " << _hit.Q 
         //        << "\tf12.Det = " << _hit.Detector; 
         //}
-
-
 
 
         chi2 = chi[0] + chi[1];
@@ -1267,6 +1394,7 @@ void R3BTrackS454_MDF::Output2(Double_t track_parameter[12], Double_t chi_single
 void R3BTrackS454_MDF::FinishEvent()
 {
 
+
     fTrackItems->Clear();
     fNofTrackItems = 0;
 
@@ -1285,6 +1413,7 @@ void R3BTrackS454_MDF::FinishEvent()
             fHitItems.at(det)->Clear();
         }
     }
+
 }
 
 void R3BTrackS454_MDF::FinishTask()
@@ -1305,17 +1434,36 @@ void R3BTrackS454_MDF::FinishTask()
     h_PoQ_mdf->Write();
     h_lab_xz->Write();
     h_glob_track_mul->Write();
+    h_glob_track_mul_corr->Write();
 
+    h_fib10_tof->Write();
+    h_fib12_tof->Write();
+    h_fib12_10_tof->Write();
+    h_fib12_q->Write();
+    h_fib10_q->Write();
 
+    h_fib12_x->Write();
+    h_fib10_x->Write();
+
+    h_tofd7_q->Write();
+    h_tofd9_q->Write();
+
+    tree_out.Write();
 }
 
-void R3BTrackS454_MDF::Detector_Hit::Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Int_t _q, Int_t _det)
+void R3BTrackS454_MDF::Detector_Hit::Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Double_t _q, Double_t _t, Int_t _det)
 {
-    X =_x; Y=_y; Z=_z; Q=_q; Detector = _det;
+    X =_x; Y=_y; Z=_z; Q=_q; T=_t; Detector = _det;
     return;
 }
 
-void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t * xd, Double_t * yd, Double_t * zd)
+void R3BTrackS454_MDF::Detector_Hit::Set_XYZ_det(Double_t _x, Double_t _y, Double_t _z)
+{
+    Xdet =_x; Ydet=_y; Zdet=_z;
+    return;
+}
+
+void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double_t* td, Double_t * xd, Double_t * yd, Double_t * zd)
 {
     //Make sure that hit containers are empty
     f3a_hits.clear();
@@ -1325,6 +1473,10 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
     f12_hits.clear();
     f13_hits.clear();
     dtof_hits.clear();
+
+    f10_hits_det.clear();
+    f12_hits_det.clear();
+
 
     //MDF data vectors
     X0_data.clear();
@@ -1342,6 +1494,10 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
     double f3ab_halfwidth =  0.021*256;//210 um pitch
     double fib_halfwidth =  512.*0.05;//500um pitch
 
+
+    bool good_tofd7=false;
+    bool good_tofd9=false;
+
     //At first convert each detector hit to the lab coordinates (in cm as r3broot)
     for(int i=0; i<detcount; i++)
     {
@@ -1351,7 +1507,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
                     xd[i]*(-100.) - 0.25 -  f3ab_halfwidth,// 5 mm slit, flipped
                     yd[i],
                     zd[i]+80.5,
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
 
             f3a_hits.push_back(det_hit);
         }
@@ -1362,7 +1518,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
                     xd[i]*100. + 0.25 + f3ab_halfwidth, //5mm slit
                     yd[i],
                     zd[i]+80.5,
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
 
             f3b_hits.push_back(det_hit);
         }
@@ -1373,9 +1529,12 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
                     xd[i]*100.*TMath::Cos(Angle) - 119.3 + fib_halfwidth * TMath::Cos(Angle),
                     yd[i],
                     0. + xd[i]*100. * TMath::Sin(Angle) + 660.2 + fib_halfwidth * TMath::Sin(Angle) ,
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
+                
+            det_hit.Set_XYZ_det(xd[i]*100., yd[i]*100., zd[i]*100);//saving original det coordiantes
 
             f10_hits.push_back(det_hit);
+            
         } 
 
         else if(det[i] == 3) //fi11
@@ -1383,7 +1542,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
             det_hit.Set_XYZQ(xd[i]*100,
                     yd[i],
                     zd[i],
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
             f11_hits.push_back(det_hit);
         }
 
@@ -1393,7 +1552,10 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
                     xd[i]*100.*TMath::Cos(Angle) - 92.4 + fib_halfwidth * TMath::Cos(Angle),
                     yd[i],
                     0. + xd[i] * 100. * TMath::Sin(Angle) + 575.5 + fib_halfwidth * TMath::Sin(Angle) ,
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
+
+            det_hit.Set_XYZ_det(xd[i]*100., yd[i]*100., zd[i]*100);//saving original det coordiantes
+
             f12_hits.push_back(det_hit);
         }
 
@@ -1403,7 +1565,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
                     xd[i]*100.,
                     yd[i],
                     zd[i],
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
             f13_hits.push_back(det_hit);
         }
 
@@ -1413,16 +1575,17 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
                     xd[i]*100.,
                     yd[i]*100.,
                     zd[i],
-                    qd[i], det[i]);
+                    qd[i], td[i], det[i]);
             dtof_hits.push_back(det_hit);
-        }
+
+                   }
 
         else continue;
     }//end of transformation to the lab system
 
     //Now actual tracking
     if(f12_hits.size()==0 || f10_hits.size()==0 
-            || f12_hits.size()>4 || f10_hits.size()>4
+            //|| f12_hits.size()>4 || f10_hits.size()>4
             || dtof_hits.size()==0
             || f3a_hits.size()!=0 || f3b_hits.size()!=0) return;
 
@@ -1432,9 +1595,17 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
     //cout << "\n\nNew event ******************************" << endl;
     for(auto & _hit_f12 : f12_hits)
     {
+
+        if(_hit_f12.Q<6) continue;
+
         for(auto & _hit_f10 : f10_hits)
         {
-            is_used_combo=false;
+
+            if(_hit_f10.Q<6) continue;
+
+            //if((_hit_f12.T-_hit_f10.T)<(-1.2) ||
+            //       (_hit_f12.T-_hit_f10.T)>0.4 ) continue;
+
 
             //==== Tracking X0 coordiante (target X position) ========
             X0.edata[0] = 0.; // TX0 value for unreacted beam
@@ -1445,28 +1616,28 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
             X0.value = MDF_X0->MDF(X0.pdata);
 
             //==== Tracking TX0 angle from the target ========
-            TX0.edata[0] = X0.value;//X0
+            TX0.edata[0] = 0;//X0
             TX0.edata[1] = 0.;//Z0
             TX0.edata[2] = _hit_f12.X;
             TX0.edata[3] = _hit_f12.Z;
             TX0.edata[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
             MDF_TX0->X2P(TX0.edata, TX0.pdata);
             TX0.value = MDF_TX0->MDF(TX0.pdata);
-           
-           //==== Repeat X0 after tracking ========
-            X0.edata[0] = TX0.value; // TX0 value for unreacted beam
-            MDF_X0->X2P(X0.edata, X0.pdata);
-            X0.value = MDF_X0->MDF(X0.pdata);
 
-          //==== Repeat TX0 angle from the target ========
-            TX0.edata[0] = X0.value;//X0
-            MDF_TX0->X2P(TX0.edata, TX0.pdata);
-            TX0.value = MDF_TX0->MDF(TX0.pdata);
-         
             //==== Repeat X0 after tracking ========
-            X0.edata[0] = TX0.value; // TX0 value for unreacted beam
-            MDF_X0->X2P(X0.edata, X0.pdata);
-            X0.value = MDF_X0->MDF(X0.pdata);
+            //X0.edata[0] = TX0.value; // TX0 value for unreacted beam
+            //MDF_X0->X2P(X0.edata, X0.pdata);
+            //X0.value = MDF_X0->MDF(X0.pdata);
+
+            //==== Repeat TX0 angle from the target ========
+            //TX0.edata[0] = X0.value;//X0
+            //MDF_TX0->X2P(TX0.edata, TX0.pdata);
+            //TX0.value = MDF_TX0->MDF(TX0.pdata);
+
+            //// //==== Repeat X0 after tracking ========
+            //X0.edata[0] = TX0.value; // TX0 value for unreacted beam
+            //MDF_X0->X2P(X0.edata, X0.pdata);
+            //X0.value = MDF_X0->MDF(X0.pdata);
 
             //==== Tracking PoQ from the target ========
             PoQ.edata[0] = X0.value;//X0
@@ -1475,26 +1646,89 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t 
             PoQ.edata[3] = _hit_f12.Z;
             PoQ.edata[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
             MDF_PoQ->X2P(PoQ.edata, PoQ.pdata);
+            //PoQ.value = MDF_PoQ->MDF(PoQ.pdata) * 1482./ 1672.;
             PoQ.value = MDF_PoQ->MDF(PoQ.pdata);
 
-            if(X0.value < (0.622-5*0.26) || 
-                    X0.value > (0.622+5*0.26) || 
-                    TX0.value < (0.0022-5*0.001) || 
-                    TX0.value > (0.0022+5*0.001)
+            if(     
+                    //run 395
+                    //X0.value < -1.5 || 
+                    //X0.value > 0.2 || 
+                    //TX0.value < -0.005 || 
+                    //TX0.value > 0.
+
+                    //run 391
+                    //X0.value < -1. || 
+                    //X0.value > 1. || 
+                    //TX0.value < -0.003 || 
+                    //TX0.value > 0.003
+
+                    //run 389
+                    X0.value < 0. || 
+                    X0.value > 1.3 || 
+                    TX0.value < 0 || 
+                    TX0.value > 0.005 
               ) continue; 
 
-            //if(is_used_combo) continue;
+            //cout << "\n\nF12 hit X = " <<  _hit_f12.X;
+            //cout << "\nF10 hit X = " << _hit_f10.X;
 
-            TX0_data.push_back(TX0);
-            X0_data.push_back(X0);
-            PoQ_data.push_back(PoQ);
+            PoQ.f10_hit.Set_XYZQ(
+                    _hit_f10.X,
+                    _hit_f10.Y,
+                    _hit_f10.Z,
+                    _hit_f10.Q,
+                    _hit_f10.T,
+                    _hit_f10.Detector);
 
-            //====== Filling data to the histrograms =======
-            //h_X0_mdf->Fill(X0.value);
-            //h_TX0_mdf->Fill(TX0.value);
+            PoQ.f12_hit.Set_XYZQ(
+                    _hit_f12.X,
+                    _hit_f12.Y,
+                    _hit_f12.Z,
+                    _hit_f12.Q,
+                    _hit_f12.T,
+                    _hit_f12.Detector);
 
-            h_lab_xz->Fill(_hit_f12.Z, _hit_f12.X);
-            h_lab_xz->Fill(_hit_f10.Z, _hit_f10.X);
+            //save also det coordinates
+            PoQ.f10_hit.Set_XYZ_det(
+                    _hit_f10.Xdet,
+                    _hit_f10.Ydet,
+                    _hit_f10.Zdet
+                    );
+
+          //save also det coordinates
+            PoQ.f12_hit.Set_XYZ_det(
+                    _hit_f12.Xdet,
+                    _hit_f12.Ydet,
+                    _hit_f12.Zdet
+                    );
+
+
+            for(auto & _hit_tofd : dtof_hits)
+            {
+                if(_hit_tofd.Detector==7
+                        //&& _hit_tofd.Q>7
+                  )
+                {
+                    h_tofd7_q->Fill(_hit_tofd.Q);
+                    good_tofd7=true;
+                }
+
+                if(_hit_tofd.Detector==9 
+                        //&& _hit_tofd.Q>7
+                  )
+                {
+                    h_tofd9_q->Fill(_hit_tofd.Q);
+                    good_tofd9=true;
+                }
+
+            }
+
+            if(good_tofd7 && good_tofd9)
+            {
+                TX0_data.push_back(TX0);
+                X0_data.push_back(X0);
+                PoQ_data.push_back(PoQ);
+            }
             //cout << "\n\tReconstructed X0 = " << X0.value;
         }
     }

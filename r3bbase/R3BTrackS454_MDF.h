@@ -101,7 +101,7 @@ class R3BTrackS454_MDF : public FairTask
     virtual void Output2(Double_t tracker[6], Double_t chi2[2]);
     
     //Main tracking function
-    void TrackMDF(Int_t detcount, Int_t* det, Int_t* qd, Double_t * xd, Double_t * yd, Double_t * zd);
+    void TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double_t* td, Double_t * xd, Double_t * yd, Double_t * zd);
 
     /**
      * Method for setting the trigger value.
@@ -256,7 +256,21 @@ class R3BTrackS454_MDF : public FairTask
     TH1F * h_TX0_mdf;
     TH1F * h_PoQ_mdf;
     TH1F * h_glob_track_mul;
+    TH2F * h_glob_track_mul_corr;
     TH2F * h_lab_xz;
+
+    TH1F * h_fib10_tof;
+    TH1F * h_fib12_tof;
+    TH1F * h_fib12_10_tof;
+    
+    TH1F * h_fib10_q;
+    TH1F * h_fib12_q;
+
+    TH1F * h_fib10_x;
+    TH1F * h_fib12_x;
+
+    TH1F * h_tofd9_q;
+    TH1F * h_tofd7_q;
 
     R3BMDFWrapper * MDF_X0;
     R3BMDFWrapper * MDF_TX0;
@@ -267,11 +281,16 @@ class R3BTrackS454_MDF : public FairTask
     struct Detector_Hit
     {
         Double_t X;
+        Double_t Xdet;//internal X coordiante
         Double_t Y;
+        Double_t Ydet;//internal Y coordiante
         Double_t Z;
-        Int_t Q;
+        Double_t Zdet;//internal Z coordinate
+        Double_t Q;
+        Double_t T;
         Int_t Detector;
-        void Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Int_t q, Int_t _det);
+        void Set_XYZQ(Double_t _x, Double_t _y, Double_t _z, Double_t _q, Double_t _t, Int_t _det);
+        void Set_XYZ_det(Double_t _x, Double_t _y, Double_t _z);//saving internal det coordinates (for alignemnt)
     };
 
 
@@ -282,6 +301,10 @@ class R3BTrackS454_MDF : public FairTask
     std::vector<Detector_Hit> f12_hits;
     std::vector<Detector_Hit> f13_hits;
     std::vector<Detector_Hit> dtof_hits;
+
+    //Internal det coordinate storage
+    std::vector<Detector_Hit> f10_hits_det;
+    std::vector<Detector_Hit> f12_hits_det;
 
     //MDF data containers
     struct MDF_Data_X0 //TX0, X1, Z1, TX1
@@ -303,12 +326,24 @@ class R3BTrackS454_MDF : public FairTask
         Double_t edata[5];
         Double_t pdata[5];
         Double_t value;
+        Detector_Hit f10_hit;
+        Detector_Hit f12_hit;
     };
 
 
     std::vector<MDF_Data_X0> X0_data;
     std::vector<MDF_Data_TX0> TX0_data;
     std::vector<MDF_Data_PoQ> PoQ_data;
+
+  public:
+    //saving track data for tracker alignment
+    TTree tree_out;
+    Double_t f10_X;
+    Double_t f12_X;
+    Int_t Current;
+    bool is_init_out;
+
+    
 
   public:
     ClassDef(R3BTrackS454_MDF, 1)
