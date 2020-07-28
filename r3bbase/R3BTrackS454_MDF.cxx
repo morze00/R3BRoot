@@ -1236,8 +1236,8 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         Double_t test[9];
         if(mult10>0 //&& mult10<20
                 && mult12>0// && mult12<20
-                && mult11 ==0 && mult13==0
-                && mult3a ==0 && mult3b==0
+                //&& mult11 ==0 && mult13==0
+                //&& mult3a ==0 && mult3b==0
           )
         {
             TrackMDF(countdet, detector, qdet, tdet, xdet, ydet, zdet);

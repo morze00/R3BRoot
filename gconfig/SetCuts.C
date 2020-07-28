@@ -55,8 +55,8 @@ void SetCuts()
 */
     cout << "[SetCuts]: Setting Cuts ..." << endl;
 
-    const Double_t cut1 = 1.0E-4;  // GeV --> 100 keV
-    const Double_t cut2 = 1.0E-3;  // GeV --> 1 MeV
+    const Double_t cut1 = 1.0E-5;  // GeV --> 10 keV
+    const Double_t cut2 = 1.0E-5;  // GeV --> 10 keV
     const Double_t tofmax = 1.E10; // seconds
 
     gMC->SetCut("CUTGAM", cut1);   /** gammas (GeV)*/
