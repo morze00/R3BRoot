@@ -252,14 +252,27 @@ class R3BTrackS454_MDF : public FairTask
 
         //Define what is needed for MDF tracking
 
+        TH2F * h_X1_vs_TX1_exp;
         TH1F * h_X0_mdf;
+        TH2F * h_X0_vs_X0;
+        TH1F * h_X0residual;
         TH1F * h_TX0_mdf;
         TH1F * h_PoQ_mdf;
+        TH2F * h_PoQ_vs_ToF;
         TH2F * h_PoQ_vs_Q;
+        TH2F * h_PoQ1_vs_PoQ2;
         TH1F * h_glob_track_mul;
         TH2F * h_glob_track_mul_corr;
         TH2F * h_lab_xz;
+        TH2F * h_dTOF_XvsY;
 
+        TH2F * h_dTOF_X_vs_Xproj;
+        TH1F * h_dTOF_Xresidual;
+        TH2F * h_f3b_TX_vs_TX;
+        TH1F * h_f3b_TXresidual;
+
+        TH1F * h_fib3b_tof;
+        TH1F * h_fib3b_q;
         TH1F * h_fib10_tof;
         TH1F * h_fib12_tof;
         TH1F * h_fib12_10_tof;
@@ -275,7 +288,10 @@ class R3BTrackS454_MDF : public FairTask
         TH1F * h_fib13_x;
 
         TH1F * h_tofd9_q;
+        TH1F * h_tofd8_q;
         TH1F * h_tofd7_q;
+        TH1F * h_tofd6_q;
+        TH2F * h_tofd_QvsX;
 
         R3BMDFWrapper * MDF_X0;
         R3BMDFWrapper * MDF_TX0;
@@ -322,17 +338,26 @@ class R3BTrackS454_MDF : public FairTask
             Double_t value_tx0;
             Double_t value_x0;
 
+            Detector_Hit f3b_hit;
+            Detector_Hit f3a_hit;
             Detector_Hit f10_hit;
             Detector_Hit f12_hit;
             Detector_Hit f11_hit;
             Detector_Hit f13_hit;
             Detector_Hit dtof_hit;
 
+            Bool_t is_f3a;
+            Bool_t is_f3b;
             Bool_t is_f10;
             Bool_t is_f11;
             Bool_t is_f12;
             Bool_t is_f13;
             Bool_t is_dtof;
+            Bool_t is_dtof_6;
+            Bool_t is_dtof_7;
+            Bool_t is_dtof_8;
+            Bool_t is_dtof_9;
+
         };
 
 
@@ -341,12 +366,65 @@ class R3BTrackS454_MDF : public FairTask
     public:
         //saving track data for tracker alignment
         TTree tree_out;
-        Double_t f10_X;
-        Double_t f12_X;
+
+        UInt_t N_glob_tracks;
+
+        Double_t f10_X[100];
+        Double_t f10_Y[100];
+        Double_t f10_Z[100];
+        Double_t f10_Q[100];
+        Double_t f10_T[100];
+
+        Int_t is_f12[100];
+        Double_t f12_X[100];
+        Double_t f12_Y[100];
+        Double_t f12_Z[100];
+        Double_t f12_Q[100];
+        Double_t f12_T[100];
+
+        Double_t f3b_X[100];
+        Double_t f3b_Y[100];
+        Double_t f3b_Z[100];
+        Double_t f3b_Q[100];
+        Double_t f3b_T[100];
+
+        Double_t tofd_X[100];
+        Double_t tofd_Y[100];
+        Double_t tofd_Z[100];
+        Double_t tofd_Q[100];
+        Double_t tofd_T[100];
+        
+        Double_t X0_mdf[100];
+        Double_t TX0_mdf[100];
+        Double_t PoQ_mdf[100];
+
+        Double_t X0_residual[100];
+        Double_t TX0_residual[100];
+        Double_t X0_proj_by_f3b[100];
+        Double_t TX0_proj_by_f3b[100];
+
         Int_t Current;
         bool is_init_out;
 
+        //Alignment constants
+        const double Angle = 17.7 * TMath::Pi()/180.;//Central turning angle from Daniel
+        const double Z0 = 277.7; //cm from target middle to the central turning point in GLAD
+        const double f3ab_halfwidth =  0.021*256;//210 um pitch
+        const double fib_halfwidth =  512.*0.05;//500um pitch
 
+        //Alignment offsets for F10,12
+        const double F10_TX1par  =  0.04862;
+        const double F12_TX1par  = -0.01913;
+        const double F1012_Xpar  = -0.5151;
+        const double F1012_Zpar  =  0.8256;
+        const double F1012_X0par =  0.2449;
+
+        //Alignment offsets for F11,13
+        const double F11_TX1par  = -0.02797;
+        const double F13_TX1par  = -0.04109;
+        const double F1113_Xpar  = -0.4749;
+        const double F1113_Zpar  =  1.321;
+        const double F1113_X0par =  0.23;
 
     public:
         ClassDef(R3BTrackS454_MDF, 1)
