@@ -294,7 +294,8 @@ class R3BTrackS454_MDF : public FairTask
         TH2F * h_tofd_QvsX;
 
         R3BMDFWrapper * MDF_X0;
-        R3BMDFWrapper * MDF_TX0;
+        R3BMDFWrapper * MDF_TX0_targ;
+        R3BMDFWrapper * MDF_TX0_f3;
         R3BMDFWrapper * MDF_PoQ;
 
     public:
@@ -330,12 +331,17 @@ class R3BTrackS454_MDF : public FairTask
 
             Double_t edata_tx0[5];//X0, Z0, X1, Z1, TX1
             Double_t pdata_tx0[5];
+        
+            Double_t edata_tx0_f3[5];//X0, Z0, X1, Z1, TX1
+            Double_t pdata_tx0_f3[5];
+
 
             Double_t edata_x0[4];//TX0, X1, Z1, TX1
             Double_t pdata_x0[4];
 
             Double_t value_poq;
             Double_t value_tx0;
+            Double_t value_tx0_f3;
             Double_t value_x0;
 
             Detector_Hit f3b_hit;
@@ -369,42 +375,44 @@ class R3BTrackS454_MDF : public FairTask
 
         UInt_t N_glob_tracks;
 
-        Double_t f10_X[100];
-        Double_t f10_Y[100];
-        Double_t f10_Z[100];
-        Double_t f10_Q[100];
-        Double_t f10_T[100];
+        Float_t f10_X[400];
+        Float_t f10_Y[400];
+        Float_t f10_Z[400];
+        Float_t f10_Q[400];
+        Float_t f10_T[400];
 
-        Int_t is_f12[100];
-        Double_t f12_X[100];
-        Double_t f12_Y[100];
-        Double_t f12_Z[100];
-        Double_t f12_Q[100];
-        Double_t f12_T[100];
+        Float_t f12_X[400];
+        Float_t f12_Y[400];
+        Float_t f12_Z[400];
+        Float_t f12_Q[400];
+        Float_t f12_T[400];
 
-        Double_t f3b_X[100];
-        Double_t f3b_Y[100];
-        Double_t f3b_Z[100];
-        Double_t f3b_Q[100];
-        Double_t f3b_T[100];
+        Float_t f3b_X[400];
+        Float_t f3b_Y[400];
+        Float_t f3b_Z[400];
+        Float_t f3b_Q[400];
+        Float_t f3b_T[400];
 
-        Double_t tofd_X[100];
-        Double_t tofd_Y[100];
-        Double_t tofd_Z[100];
-        Double_t tofd_Q[100];
-        Double_t tofd_T[100];
+        Float_t tofd_X[400];
+        Float_t tofd_Y[400];
+        Float_t tofd_Z[400];
+        Float_t tofd_Q[400];
+        Float_t tofd_T[400];
         
-        Double_t X0_mdf[100];
-        Double_t TX0_mdf[100];
-        Double_t PoQ_mdf[100];
+        Float_t X0_mdf[400];
+        Float_t TX0_mdf[400];
+        Float_t TX0_f3_mdf[400];
+        Float_t PoQ_mdf[400];
 
-        Double_t X0_residual[100];
-        Double_t TX0_residual[100];
-        Double_t X0_proj_by_f3b[100];
-        Double_t TX0_proj_by_f3b[100];
+        Float_t X0_residual[400];
+        Float_t TX0_residual[400];
+        Float_t TX0_residual_f3[400];
+        Float_t X0_proj_by_f3b[400];
+        Float_t TX0_proj_by_f3b[400];
+        
+        Float_t Xoffset_f3b[400];
 
         Int_t Current;
-        bool is_init_out;
 
         //Alignment constants
         const double Angle = 17.7 * TMath::Pi()/180.;//Central turning angle from Daniel
@@ -425,6 +433,9 @@ class R3BTrackS454_MDF : public FairTask
         const double F1113_Xpar  = -0.4749;
         const double F1113_Zpar  =  1.321;
         const double F1113_X0par =  0.23;
+
+        //Alignment offset of f3b
+        const double F3b_dX  =  -0.253;
 
     public:
         ClassDef(R3BTrackS454_MDF, 1)
