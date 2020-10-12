@@ -276,81 +276,99 @@ InitStatus R3BTrackS454_MDF::Init()
 
     }
 
-    h_X1_vs_TX1_exp = new TH2F("h_X1_vs_TX1_exp","h_X1_vs_TX1_exp",1000,-500,0,1000,-1,1);
-    h_X0_mdf = new TH1F("h_X0_mdf","h_X0_mdf",1000,-20,20);
-    h_X0_vs_X0 = new TH2F("h_X0_vs_X0","h_X0_vs_X0",1000,-5,5,1000,-5,5);
-    h_X0residual = new TH1F("h_X0residual","h_X0residual",1000,-10,10);
-    h_TX0_mdf = new TH1F("h_TX0_mdf","h_TX0_mdf",4000,-0.1,0.1);
-    h_PoQ_mdf = new TH1F("h_PoQ_mdf","h_PoQ_mdf",10000,1,2.8);
-    h_PoQ_vs_Q = new TH2F("h_PoQ_vs_Q","h_PoQ_vs_Q",1000,0.,10,1000,0,4);
-    h_PoQ_vs_ToF = new TH2F("h_PoQ_vs_ToF","h_PoQ_vs_ToF", 2000,-100.,100,1000,0,4);
-    h_PoQ1_vs_PoQ2 = new TH2F("h_PoQ1_vs_PoQ2","h_PoQ1_vs_PoQ2",1000,0,4,1000,0,4);
-    h_lab_xz = new TH2F("h_lab_xz","h_lab_xz",2000,0,800,2000,-500,500);
-    h_dTOF_XvsY = new TH2F("h_dTOF_XvsY","h_dTOF_XvsY",2000,-500,0,2000,-200,200);
-    h_dTOF_X_vs_Xproj = new TH2F("h_dTOF_X_vs_Xproj","h_dTOF_X_vs_Xproj",1000,-500,0,1000,-500,0);
-    h_dTOF_Xresidual = new TH1F("h_dTOF_Xresidual","h_dTOF_Xresidual",1000,-10,10);
-    h_f3b_TX_vs_TX = new TH2F("h_f3b_TX_vs_TX","h_f3b_TX_vs_TX",1000,0.,0.08,1000,0.,0.08);
-    h_f3b_TXresidual = new TH1F("h_f3b_TXresidual","h_f3b_TXresidual",1000,-0.1,0.1);
-    h_glob_track_mul = new TH1F("h_glob_track_mul","h_glob_track_mul",100,0,100);
-    h_glob_track_mul_corr = new TH2F("h_glob_track_mul_corr","h_glob_track_mul_corr",100,0,100,100,0,100);
-    h_fib3b_tof = new TH1F("h_fib3b_tof","h_fib3b_tof",1000,-20,20);
-    h_fib3b_q = new TH1F("h_fib3b_q","h_fib3b_q",1000,0,20);
-    h_fib10_tof = new TH1F("h_fib10_tof","h_fib10_tof",1000,-20,20);
-    h_fib12_tof = new TH1F("h_fib12_tof","h_fib12_tof",1000,-20,20);
-    h_fib12_10_tof = new TH1F("h_fib12_10_tof","h_fib12_10_tof",1000,-40,40);
-    h_fib10_q = new TH1F("h_fib10_q","h_fib10_q",1000,0,20);
-    h_fib11_q = new TH1F("h_fib11_q","h_fib11_q",1000,0,20);
-    h_fib12_q = new TH1F("h_fib12_q","h_fib12_q",1000,0,20);
-    h_fib13_q = new TH1F("h_fib13_q","h_fib13_q",1000,0,20);
-    h_fib10_x = new TH1F("h_fib10_x","h_fib10_x",2000,-120,0);
-    h_fib12_x = new TH1F("h_fib12_x","h_fib12_x",2000,-120,0);
-    h_fib11_x = new TH1F("h_fib11_x","h_fib11_x",2000,-120,0);
-    h_fib13_x = new TH1F("h_fib13_x","h_fib13_x",2000,-120,0);
-    h_tofd7_q = new TH1F("h_tofd7_q","h_tofd7_q",1000,0,20);
-    h_tofd9_q = new TH1F("h_tofd9_q","h_tofd9_q",1000,0,20);
-    h_tofd_QvsX = new TH2F("h_tofd_QvsX","h_tofd_QvsX",1000,-500,0,1000,0,10);
-
     tree_out.SetName("tree_out");
 
-    tree_out.Branch("N_glob_tracks",     &N_glob_tracks,  "N_glob_tracks/i");
+    tree_out.Branch("N_glob_tracks_left",     &N_glob_tracks_left,  "N_glob_tracks_left/i");
+    tree_out.Branch("N_glob_tracks_right",     &N_glob_tracks_right,  "N_glob_tracks_right/i");
 
-    tree_out.Branch("f10_X",     f10_X,  "f10_X[N_glob_tracks]/F");
-    tree_out.Branch("f10_Y",     f10_Y,  "f10_Y[N_glob_tracks]/F");
-    tree_out.Branch("f10_Z",     f10_Z,  "f10_Z[N_glob_tracks]/F");
-    tree_out.Branch("f10_Q",     f10_Q,  "f10_Q[N_glob_tracks]/F");
-    tree_out.Branch("f10_T",     f10_T,  "f10_T[N_glob_tracks]/F");
+    //============= Left arm detectors ================
 
-    tree_out.Branch("f12_X",     f12_X,  "f12_X[N_glob_tracks]/F");
-    tree_out.Branch("f12_Y",     f12_Y,  "f12_Y[N_glob_tracks]/F");
-    tree_out.Branch("f12_Z",     f12_Z,  "f12_Z[N_glob_tracks]/F");
-    tree_out.Branch("f12_Q",     f12_Q,  "f12_Q[N_glob_tracks]/F");
-    tree_out.Branch("f12_T",     f12_T,  "f12_T[N_glob_tracks]/F");
+    tree_out.Branch("f10_X",     f10_X,  "f10_X[N_glob_tracks_left]/F");
+    tree_out.Branch("f10_Y",     f10_Y,  "f10_Y[N_glob_tracks_left]/F");
+    tree_out.Branch("f10_Z",     f10_Z,  "f10_Z[N_glob_tracks_left]/F");
+    tree_out.Branch("f10_Q",     f10_Q,  "f10_Q[N_glob_tracks_left]/F");
+    tree_out.Branch("f10_T",     f10_T,  "f10_T[N_glob_tracks_left]/F");
 
-    tree_out.Branch("f3b_X",     f3b_X,  "f3b_X[N_glob_tracks]/F");
-    tree_out.Branch("f3b_Y",     f3b_Y,  "f3b_Y[N_glob_tracks]/F");
-    tree_out.Branch("f3b_Z",     f3b_Z,  "f3b_Z[N_glob_tracks]/F");
-    tree_out.Branch("f3b_Q",     f3b_Q,  "f3b_Q[N_glob_tracks]/F");
-    tree_out.Branch("f3b_T",     f3b_T,  "f3b_T[N_glob_tracks]/F");
+    tree_out.Branch("f12_X",     f12_X,  "f12_X[N_glob_tracks_left]/F");
+    tree_out.Branch("f12_Y",     f12_Y,  "f12_Y[N_glob_tracks_left]/F");
+    tree_out.Branch("f12_Z",     f12_Z,  "f12_Z[N_glob_tracks_left]/F");
+    tree_out.Branch("f12_Q",     f12_Q,  "f12_Q[N_glob_tracks_left]/F");
+    tree_out.Branch("f12_T",     f12_T,  "f12_T[N_glob_tracks_left]/F");
 
-    tree_out.Branch("tofd_X",     tofd_X,  "f3b_3b_X[N_glob_tracks]/F");
-    tree_out.Branch("tofd_Y",     tofd_Y,  "f3b_3b_Y[N_glob_tracks]/F");
-    tree_out.Branch("tofd_Z",     tofd_Z,  "f3b_3b_Z[N_glob_tracks]/F");
-    tree_out.Branch("tofd_Q",     tofd_Q,  "f3b_3b_Q[N_glob_tracks]/F");
-    tree_out.Branch("tofd_T",     tofd_T,  "f3b_3b_T[N_glob_tracks]/F");
-
-    tree_out.Branch("X0_mdf",     X0_mdf,    "X0_mdf[N_glob_tracks]/F");
-    tree_out.Branch("TX0_mdf",    TX0_mdf,   "TX0_mdf[N_glob_tracks]/F");
-    tree_out.Branch("TX0_f3_mdf", TX0_f3_mdf,"TX0_f3_mdf[N_glob_tracks]/F");
-    tree_out.Branch("PoQ_mdf",    PoQ_mdf,   "PoQ_mdf[N_glob_tracks]/F");
-
-    tree_out.Branch("X0_residual",     X0_residual,     "X0_residual[N_glob_tracks]/F");
-    tree_out.Branch("TX0_residual",    TX0_residual,    "TX0_residual[N_glob_tracks]/F");
-    tree_out.Branch("TX0_residual_f3", TX0_residual_f3, "TX0_residual_f3[N_glob_tracks]/F");
-
-    tree_out.Branch("X0_proj_by_f3b",    X0_proj_by_f3b,  "X0_proj_by_f3b[N_glob_tracks]/F");
-    tree_out.Branch("TX0_proj_by_f3b",   TX0_proj_by_f3b,  "TX0_proj_by_f3b[N_glob_tracks]/F");
+    tree_out.Branch("f3b_X",     f3b_X,  "f3b_X[N_glob_tracks_left]/F");
+    tree_out.Branch("f3b_Y",     f3b_Y,  "f3b_Y[N_glob_tracks_left]/F");
+    tree_out.Branch("f3b_Z",     f3b_Z,  "f3b_Z[N_glob_tracks_left]/F");
+    tree_out.Branch("f3b_Q",     f3b_Q,  "f3b_Q[N_glob_tracks_left]/F");
+    tree_out.Branch("f3b_T",     f3b_T,  "f3b_T[N_glob_tracks_left]/F");
     
-    tree_out.Branch("Xoffset_f3b",   Xoffset_f3b,  "Xoffset_f3b[N_glob_tracks]/F");
+    tree_out.Branch("tofd_left_X",     tofd_left_X,  "tofd_left_X[N_glob_tracks_left]/F");
+    tree_out.Branch("tofd_left_Y",     tofd_left_Y,  "tofd_left_Y[N_glob_tracks_left]/F");
+    tree_out.Branch("tofd_left_Z",     tofd_left_Z,  "tofd_left_Z[N_glob_tracks_left]/F");
+    tree_out.Branch("tofd_left_Q",     tofd_left_Q,  "tofd_left_Q[N_glob_tracks_left]/F");
+    tree_out.Branch("tofd_left_T",     tofd_left_T,  "tofd_left_T[N_glob_tracks_left]/F");
+
+    //================ Right arm detectors ==============
+
+    tree_out.Branch("f11_X",     f11_X,  "f11_X[N_glob_tracks_right]/F");
+    tree_out.Branch("f11_Y",     f11_Y,  "f11_Y[N_glob_tracks_right]/F");
+    tree_out.Branch("f11_Z",     f11_Z,  "f11_Z[N_glob_tracks_right]/F");
+    tree_out.Branch("f11_Q",     f11_Q,  "f11_Q[N_glob_tracks_right]/F");
+    tree_out.Branch("f11_T",     f11_T,  "f11_T[N_glob_tracks_right]/F");
+
+    tree_out.Branch("f13_X",     f13_X,  "f13_X[N_glob_tracks_right]/F");
+    tree_out.Branch("f13_Y",     f13_Y,  "f13_Y[N_glob_tracks_right]/F");
+    tree_out.Branch("f13_Z",     f13_Z,  "f13_Z[N_glob_tracks_right]/F");
+    tree_out.Branch("f13_Q",     f13_Q,  "f13_Q[N_glob_tracks_right]/F");
+    tree_out.Branch("f13_T",     f13_T,  "f13_T[N_glob_tracks_right]/F");
+
+    tree_out.Branch("f3a_X",     f3a_X,  "f3a_X[N_glob_tracks_right]/F");
+    tree_out.Branch("f3a_Y",     f3a_Y,  "f3a_Y[N_glob_tracks_right]/F");
+    tree_out.Branch("f3a_Z",     f3a_Z,  "f3a_Z[N_glob_tracks_right]/F");
+    tree_out.Branch("f3a_Q",     f3a_Q,  "f3a_Q[N_glob_tracks_right]/F");
+    tree_out.Branch("f3a_T",     f3a_T,  "f3a_T[N_glob_tracks_right]/F");
+    
+    tree_out.Branch("tofd_right_X",     tofd_right_X,  "tofd_right_X[N_glob_tracks_right]/F");
+    tree_out.Branch("tofd_right_Y",     tofd_right_Y,  "tofd_right_Y[N_glob_tracks_right]/F");
+    tree_out.Branch("tofd_right_Z",     tofd_right_Z,  "tofd_right_Z[N_glob_tracks_right]/F");
+    tree_out.Branch("tofd_right_Q",     tofd_right_Q,  "tofd_right_Q[N_glob_tracks_right]/F");
+    tree_out.Branch("tofd_right_T",     tofd_right_T,  "tofd_right_T[N_glob_tracks_right]/F");
+
+    //======== Tracking variables left arm ============= 
+
+    tree_out.Branch("TX0_mdf_left",       TX0_mdf_left,      "TX0_mdf_left[N_glob_tracks_left]/F");
+    tree_out.Branch("TX0_f3_mdf_left",    TX0_f3_mdf_left,   "TX0_f3_mdf_left[N_glob_tracks_left]/F");
+    tree_out.Branch("PoQ_mdf_left",       PoQ_mdf_left,      "PoQ_mdf_left[N_glob_tracks_left]/F");
+    tree_out.Branch("X0_residual_left",   X0_residual_left,  "X0_residual_left[N_glob_tracks_left]/F");
+    tree_out.Branch("TX0_residual_left",  TX0_residual_left, "TX0_residual_left[N_glob_tracks_left]/F");
+
+    tree_out.Branch("TX0_residual_f3_left",   TX0_residual_f3_left,  "TX0_residual_f3_left[N_glob_tracks_left]/F");
+    tree_out.Branch("TX0_residual_mdf_left",   TX0_residual_mdf_left,  "TX0_residual_mdf_left[N_glob_tracks_left]/F");
+    tree_out.Branch("X0_proj_by_f3_left",     X0_proj_by_f3_left,    "X0_proj_by_f3_left[N_glob_tracks_left]/F");
+    tree_out.Branch("TX0_proj_by_f3_left",    TX0_proj_by_f3_left,   "TX0_proj_by_f3_left[N_glob_tracks_left]/F");
+    tree_out.Branch("Xoffset_f3b",        Xoffset_f3b,       "Xoffset_f3b[N_glob_tracks_left]/F");
+    
+    //======== Tracking variables right arm ============= 
+
+    tree_out.Branch("TX0_mdf_right",       TX0_mdf_right,      "TX0_mdf_right[N_glob_tracks_right]/F");
+    tree_out.Branch("TX0_f3_mdf_right",    TX0_f3_mdf_right,   "TX0_f3_mdf_right[N_glob_tracks_right]/F");
+    tree_out.Branch("PoQ_mdf_right",       PoQ_mdf_right,      "PoQ_mdf_right[N_glob_tracks_right]/F");
+    tree_out.Branch("X0_residual_right",   X0_residual_right,  "X0_residual_right[N_glob_tracks_right]/F");
+    tree_out.Branch("TX0_residual_right",  TX0_residual_right, "TX0_residual_right[N_glob_tracks_right]/F");
+    tree_out.Branch("TX0_residual_f3_right",   TX0_residual_f3_right,  "TX0_residual_f3_right[N_glob_tracks_right]/F");
+    tree_out.Branch("TX0_residual_mdf_right",   TX0_residual_mdf_right,  "TX0_residual_mdf_right[N_glob_tracks_right]/F");
+    tree_out.Branch("X0_proj_by_f3_right",     X0_proj_by_f3_right,    "X0_proj_by_f3_right[N_glob_tracks_right]/F");
+    tree_out.Branch("TX0_proj_by_f3_right",    TX0_proj_by_f3_right,   "TX0_proj_by_f3_right[N_glob_tracks_right]/F");
+    tree_out.Branch("Xoffset_f3a",        Xoffset_f3a,       "Xoffset_f3a[N_glob_tracks_right]/F");
+
+    //======== Tracking variables right arm ============= 
+    
+    tree_out.Branch("Nhits_f3a",   &Nhits_f3a,  "Nhits_f3a/i");
+    tree_out.Branch("Nhits_f3b",   &Nhits_f3b,  "Nhits_f3b/i");
+    tree_out.Branch("Nhits_f10",   &Nhits_f10,  "Nhits_f10/i");
+    tree_out.Branch("Nhits_f11",   &Nhits_f11,  "Nhits_f11/i");
+    tree_out.Branch("Nhits_f12",   &Nhits_f12,  "Nhits_f12/i");
+    tree_out.Branch("Nhits_f13",   &Nhits_f13,  "Nhits_f13/i");
+    tree_out.Branch("Nhits_tofd",   &Nhits_tofd,  "Nhits_tofd/i");
 
     return kSUCCESS;
 }
@@ -653,7 +671,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
 
         Double_t ttt = hitTofd->GetTime();
         //if (fCuts && (ttt < -100. || ttt > 100.) && !fSimu) // trigger window -1500, 1500
-        if (fCuts && (ttt < -10. || ttt > 10.) && !fSimu) // trigger window -1500, 1500
+        if (fCuts && (ttt < -20. || ttt > 20.) && !fSimu) // trigger window -1500, 1500
             continue;
 
         Double_t qqq = hitTofd->GetEloss();
@@ -1167,17 +1185,17 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         det = fi3a;
         R3BBunchedFiberHitData* hit3a = (R3BBunchedFiberHitData*)detHit3a->At(ihit3a);
         x1[det] = hit3a->GetX() / 100.;
-        y1[det] = 0.; // hit3a->GetY() / 100.;
+        y1[det] = hit3a->GetY() / 100.;
         z1[det] = 0.;
         q1[det] = hit3a->GetEloss();
         t1[det] = hit3a->GetTime();
 
-        if (q1[det] > 5.)
-            q1[det] = 8.;
-        else if (q1[det] > 2.)
-            q1[det] = 6.;
-        else if (q1[det] > 0.)
-            q1[det] = 2.;
+        //if (q1[det] > 5.)
+        //    q1[det] = 8.;
+        //else if (q1[det] > 2.)
+        //    q1[det] = 6.;
+        //else if (q1[det] > 0.)
+        //    q1[det] = 2.;
 
         tof = tStart - t1[det];
 
@@ -1189,7 +1207,8 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         //if (fCuts && !fPairs && q1[det] < cutQ)
         //    continue;
         //if (fCuts && (tof < -40 || tof > 20))
-        //    continue;
+        if (fCuts && (tof < -20 || tof > 20))
+            continue;
 
         mult3a++;
         //if (mult3a > 10)
@@ -1214,7 +1233,8 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
             ydet[countdet] = y1[det];
             zdet[countdet] = z1[det];
             qdet[countdet] = q1[det];
-            tdet[countdet] = t1[det];
+            //tdet[countdet] = t1[det];
+            tdet[countdet] = tof;
             countdet++;
         }
     }
@@ -1265,7 +1285,7 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         //    continue;
         //if (fCuts && (tof < -40 || tof > 20))
         //    continue;
-        if (fCuts && (tof < -10 || tof > 10))
+        if (fCuts && (tof < -20 || tof > 20))
             //if (fCuts && (tof < 0 || tof > 7))
             continue;
 
@@ -1311,141 +1331,198 @@ void R3BTrackS454_MDF::Exec(Option_t* option)
         countdet++;
     }
 
-    //===============================================================
-    // Tracker
-    chi2 = 1.E100;
-
-    //cout << "\n\nNhits in fi3a " << mult3a;
-    //cout << "\nNhits in fi3b " << mult3b;
-    //cout << "\nNhits in fi10 " << mult10;
-    //cout << "\nNhits in fi11 " << mult11;
-    //cout << "\nNhits in fi12 " << mult12;
-    //cout << "\nNhits in fi13 " << mult13;
-    //cout << "\nNhits in dTof " << multTofd ;
-
-    //Dummy values for the output tree
+    //========== TRACKER ==============================
     Current =0;
+    N_glob_tracks_left = 0;
+    N_glob_tracks_right = 0;
+    bool is_used;
 
-    //if (tracker && mult11>0 && mult13>0
-    //        && mult3a ==0 && mult3b==0 
-    //        && mult10 ==0 && mult12==0 
-    //   )
-
-    N_glob_tracks = 0;
-    if (tracker && mult10>0 && mult12>0 && mult3b>0 )
+    if (tracker && 
+             mult10>0 && mult12>0 && multTofd>0 && mult3b>0
+              //(mult11>0 && mult13>0 && multTofd>0 && mult3a>0) )
+       )
     {
         counter2++;
+
+        Nhits_f3a  = mult3a; 
+        Nhits_f3b  = mult3b;
+        Nhits_f10  = mult10;
+        Nhits_f11  = mult11;
+        Nhits_f12  = mult12;
+        Nhits_f13  = mult13;
+        Nhits_tofd = multTofd;
+
+        Make_Lab_Coordinates(countdet, detector, qdet, tdet, xdet, ydet, zdet);
+
+        cout << "\n============= Tracking Left Arm ============== ";
+        //============== Tracking left arm ===================
         PoQ_data.clear();
-        TrackMDF(countdet, detector, qdet, tdet, xdet, ydet, zdet);
-
-        //============== Collecting tracked data ===================
-
-        if(PoQ_data.size()>0 && PoQ_data.size()<100)
+        PoQ_data_filtered.clear();
+        Track_MDF(1);//1 - left arm (F10+F12+TOFD+F3B)
+        for(auto & _poq : PoQ_data) //Filtering collected data
         {
-            for(auto & _poq_data : PoQ_data)
+            if( !(_poq.is_left_arm) ) continue;
+            is_used = false;
+            for(auto & _poq_filter : PoQ_data_filtered) //check if already used
             {
-                //=========== Left arm ========================
-                if(!_poq_data.is_f10 || !_poq_data.is_f12
-                        //|| _poq_data.is_f11 || _poq_data.is_f13
-                        || !_poq_data.is_f3b
-                        || !_poq_data.is_dtof) continue;
-
-
-                // ====== Filling output tree variables ==========
-                f3b_X[N_glob_tracks] = _poq_data.f3b_hit.X;
-                f3b_Y[N_glob_tracks] = _poq_data.f3b_hit.Y;
-                f3b_Z[N_glob_tracks] = _poq_data.f3b_hit.Z;
-                f3b_Q[N_glob_tracks] = _poq_data.f3b_hit.Q;
-                f3b_T[N_glob_tracks] = _poq_data.f3b_hit.T;
-
-                f10_X[N_glob_tracks] = _poq_data.f10_hit.X;
-                f10_Y[N_glob_tracks] = _poq_data.f10_hit.Y;
-                f10_Z[N_glob_tracks] = _poq_data.f10_hit.Z;
-                f10_Q[N_glob_tracks] = _poq_data.f10_hit.Q;
-                f10_T[N_glob_tracks] = _poq_data.f10_hit.T;
-
-                f12_X[N_glob_tracks] = _poq_data.f12_hit.X;
-                f12_Y[N_glob_tracks] = _poq_data.f12_hit.Y;
-                f12_Z[N_glob_tracks] = _poq_data.f12_hit.Z;
-                f12_Q[N_glob_tracks] = _poq_data.f12_hit.Q;
-                f12_T[N_glob_tracks] = _poq_data.f12_hit.T;
-
-                tofd_X[N_glob_tracks] = _poq_data.dtof_hit.X;
-                tofd_Y[N_glob_tracks] = _poq_data.dtof_hit.Y;
-                tofd_Z[N_glob_tracks] = _poq_data.dtof_hit.Z;
-                tofd_Q[N_glob_tracks] = _poq_data.dtof_hit.Q;
-                tofd_T[N_glob_tracks] = _poq_data.dtof_hit.T;
-
-                X0_mdf[N_glob_tracks] = _poq_data.value_x0;
-                TX0_mdf[N_glob_tracks] = _poq_data.value_tx0;
-                TX0_f3_mdf[N_glob_tracks] = _poq_data.value_tx0_f3;
-                PoQ_mdf[N_glob_tracks] = _poq_data.value_poq;
-
-                X0_residual[N_glob_tracks] = 
-                    _poq_data.value_x0 - (_poq_data.f3b_hit.X - (_poq_data.value_tx0 * _poq_data.f3b_hit.Z)) ;
-
-                TX0_residual[N_glob_tracks] =
-                    _poq_data.value_tx0 - ((_poq_data.f3b_hit.X -  F1012_X0par) / _poq_data.f3b_hit.Z);
-
-
-                TX0_residual_f3[N_glob_tracks] =
-                    _poq_data.value_tx0_f3 - _poq_data.value_tx0;
-
-                if(tofd_Q[N_glob_tracks]>6.5 || tofd_Q[N_glob_tracks]<1.6 ) continue;
-                //if(TX0_residual_f3[N_glob_tracks]<(-0.002) || TX0_residual_f3[N_glob_tracks]>0.002) continue;
-                //if(X0_mdf[N_glob_tracks]<0 || X0_mdf[N_glob_tracks]>0.5) continue;
-                if(TX0_f3_mdf[N_glob_tracks]<0.015) continue;
-                if(TX0_residual_f3[N_glob_tracks]<(-0.0035) || TX0_residual_f3[N_glob_tracks]>0) continue;
-                //if(TX0_residual[N_glob_tracks]<(-0.01) || TX0_residual[N_glob_tracks]>0.001) continue;
-                //if(X0_residual[N_glob_tracks]<(-1.5) || X0_residual[N_glob_tracks]>(-0.7)) continue;
-
-
-                X0_proj_by_f3b[N_glob_tracks] = _poq_data.f3b_hit.X - (_poq_data.value_tx0_f3 * _poq_data.f3b_hit.Z);
-                TX0_proj_by_f3b[N_glob_tracks] = (_poq_data.f3b_hit.X - F1012_X0par) / _poq_data.f3b_hit.Z;
-                
-                Xoffset_f3b[N_glob_tracks] = _poq_data.f3b_hit.Z*(TX0_mdf[N_glob_tracks]- TX0_proj_by_f3b[N_glob_tracks]) ;
-
-                Current = fB;
-
-                N_glob_tracks++;
-                tree_out.Fill();
-
-
-                //h_lab_xz->Fill(_poq_data.f3b_hit.Z, _poq_data.f3b_hit.X);
-                //h_lab_xz->Fill(_poq_data.f10_hit.Z, _poq_data.f10_hit.X);
-                //h_lab_xz->Fill(_poq_data.f12_hit.Z, _poq_data.f12_hit.X);
-                //h_lab_xz->Fill(_poq_data.dtof_hit.Z, _poq_data.dtof_hit.X);
-
-                //h_X1_vs_TX1_exp->Fill( _poq_data.f12_hit.X, 
-                //(_poq_data.f10_hit.X - _poq_data.f12_hit.X)/(_poq_data.f10_hit.Z - _poq_data.f12_hit.Z));
-
-
-                //h_fib10_x->Fill(_poq_data.f10_hit.X);
-                //h_fib12_x->Fill(_poq_data.f12_hit.X);
-
-                //h_fib10_q->Fill(_poq_data.f10_hit.Q);
-                //h_fib12_q->Fill(_poq_data.f12_hit.Q);
-
-                //h_fib3b_tof->Fill(_poq_data.f3b_hit.T);
-                //h_fib3b_q->Fill(_poq_data.f3b_hit.Q);
-
-
-
-                //h_PoQ_mdf->Fill( _poq_data.value_poq);
-                //h_PoQ_vs_Q->Fill( _poq_data.dtof_hit.Q,  _poq_data.value_poq);
-                //h_PoQ_vs_ToF->Fill( _poq_data.dtof_hit.T,  _poq_data.value_poq);
-
-                //h_X0_mdf->Fill( _poq_data.value_x0);
-                //h_TX0_mdf->Fill( _poq_data.value_tx0);
+                if( Used_Track_Left(_poq, _poq_filter) )
+                {   is_used = true;  break;  }
             }
-        }
-    }
+            if(is_used) continue;
+            //If good unused track, add it to the filtered list
+            if( Good_Track_Left(_poq) ){  PoQ_data_filtered.push_back(_poq); }
+            else continue;
+
+            //Loop remaining data to see if there is anything beter
+            for(auto & _poq_check : PoQ_data)
+            {
+                if( !(_poq_check.is_left_arm) || Same_Track_Left(_poq, _poq_check)
+                        || !Good_Track_Left(_poq_check) ) continue;
+
+                if( Used_Track_Left(_poq, _poq_check) && 
+                        sqrt(pow(_poq_check.tx0_res, 2) + pow(_poq_check.tx0_f3_res,2) ) <
+                        sqrt(pow(_poq.tx0_res, 2) + pow(_poq.tx0_f3_res,2)) )
+                {
+                    cout << "\nReplacing by a better track...";
+                    PoQ_data_filtered.pop_back();
+                    PoQ_data_filtered.push_back(_poq_check);
+                }
+            }
+        }//end for loop filtering left arm
+            
+        cout << "\n Number of al potential tracks = " << PoQ_data.size() ;
+        cout << "\n NUmber tracks after filtering = " << PoQ_data_filtered.size();
 
 
+        //============== Collecting tracked data from the left arm===================
+        for(auto & _poq_data : PoQ_data_filtered)
+        {
+            if(!_poq_data.is_left_arm) continue;
+            f3b_X[N_glob_tracks_left] = _poq_data.f3b_hit.X;
+            f3b_Y[N_glob_tracks_left] = _poq_data.f3b_hit.Y;
+            f3b_Z[N_glob_tracks_left] = _poq_data.f3b_hit.Z;
+            f3b_Q[N_glob_tracks_left] = _poq_data.f3b_hit.Q;
+            f3b_T[N_glob_tracks_left] = _poq_data.f3b_hit.T;
+
+            f10_X[N_glob_tracks_left] = _poq_data.f10_hit.X;
+            f10_Y[N_glob_tracks_left] = _poq_data.f10_hit.Y;
+            f10_Z[N_glob_tracks_left] = _poq_data.f10_hit.Z;
+            f10_Q[N_glob_tracks_left] = _poq_data.f10_hit.Q;
+            f10_T[N_glob_tracks_left] = _poq_data.f10_hit.T;
+
+            f12_X[N_glob_tracks_left] = _poq_data.f12_hit.X;
+            f12_Y[N_glob_tracks_left] = _poq_data.f12_hit.Y;
+            f12_Z[N_glob_tracks_left] = _poq_data.f12_hit.Z;
+            f12_Q[N_glob_tracks_left] = _poq_data.f12_hit.Q;
+            f12_T[N_glob_tracks_left] = _poq_data.f12_hit.T;
+
+            tofd_left_X[N_glob_tracks_left] = _poq_data.dtof_hit.X;
+            tofd_left_Y[N_glob_tracks_left] = _poq_data.dtof_hit.Y;
+            tofd_left_Z[N_glob_tracks_left] = _poq_data.dtof_hit.Z;
+            tofd_left_Q[N_glob_tracks_left] = _poq_data.dtof_hit.Q;
+            tofd_left_T[N_glob_tracks_left] = _poq_data.dtof_hit.T;
+
+            TX0_mdf_left[N_glob_tracks_left]    = _poq_data.value_tx0;
+            TX0_f3_mdf_left[N_glob_tracks_left] = _poq_data.value_tx0_f3;
+            PoQ_mdf_left[N_glob_tracks_left]    = _poq_data.value_poq;
+
+            X0_residual_left[N_glob_tracks_left]     = _poq_data.x0_res;
+            TX0_residual_left[N_glob_tracks_left]    = _poq_data.tx0_res;
+            TX0_residual_f3_left[N_glob_tracks_left] = _poq_data.tx0_f3_res;
+            TX0_residual_mdf_left[N_glob_tracks_left] = _poq_data.tx0_mdf_res;
+            X0_proj_by_f3_left[N_glob_tracks_left]  = _poq_data.x0_proj_by_f3b;
+            TX0_proj_by_f3_left[N_glob_tracks_left] = _poq_data.tx0_f3;
+            Xoffset_f3b[N_glob_tracks_left] = 
+                _poq_data.f3b_hit.Z*(TX0_mdf_left[N_glob_tracks_left]- TX0_proj_by_f3_left[N_glob_tracks_left]) ;
+
+            N_glob_tracks_left++;
+
+        }//end filling tree variables from filtered data of left arm
+
+        ////============== Tracking right arm ===================
+        //PoQ_data.clear();
+        //PoQ_data_filtered.clear();
+        //Track_MDF(2);//2 = right arm (F11+F13+TOFD+F3a)
+        //for(auto & _poq : PoQ_data) //Filtering collected data
+        //{
+        //    if( !(_poq.is_right_arm) ) continue;
+        //    is_used = false;
+        //    for(auto & _poq_filter : PoQ_data_filtered) //check if already used
+        //    {
+        //        if( Used_Track_Right(_poq, _poq_filter) )
+        //        {   is_used = true;  break;  }
+        //    }
+        //    if(is_used) continue;
+        //    //If good unused track, add it to the filtered list
+        //    if( Good_Track_Right(_poq) ){  PoQ_data_filtered.push_back(_poq); }
+        //    else continue;
+
+        //    //Loop remaining data to see if there is anything beter
+        //    for(auto & _poq_check : PoQ_data)
+        //    {
+        //        if( !(_poq_check.is_right_arm) || Same_Track_Right(_poq, _poq_check)
+        //                || !Good_Track_Right(_poq_check) ) continue;
+
+        //        if( Used_Track_Right(_poq, _poq_check) && 
+        //                sqrt(pow(_poq_check.tx0_res, 2) + pow(_poq_check.tx0_f3_res,2) ) <
+        //                sqrt(pow(_poq.tx0_res, 2) + pow(_poq.tx0_f3_res,2)) )
+        //        {
+        //            PoQ_data_filtered.pop_back();
+        //            PoQ_data_filtered.push_back(_poq_check);
+        //        }
+        //    }
+        //}//end for loop filtering right arm
+
+        ////============== Collecting tracked data from the right arm===================
+        //for(auto & _poq_data : PoQ_data_filtered)
+        //{
+        //    if(!_poq_data.is_right_arm) continue;
+        //    f3a_X[N_glob_tracks_right] = _poq_data.f3a_hit.X;
+        //    f3a_Y[N_glob_tracks_right] = _poq_data.f3a_hit.Y;
+        //    f3a_Z[N_glob_tracks_right] = _poq_data.f3a_hit.Z;
+        //    f3a_Q[N_glob_tracks_right] = _poq_data.f3a_hit.Q;
+        //    f3a_T[N_glob_tracks_right] = _poq_data.f3a_hit.T;
+
+        //    f11_X[N_glob_tracks_right] = _poq_data.f11_hit.X;
+        //    f11_Y[N_glob_tracks_right] = _poq_data.f11_hit.Y;
+        //    f11_Z[N_glob_tracks_right] = _poq_data.f11_hit.Z;
+        //    f11_Q[N_glob_tracks_right] = _poq_data.f11_hit.Q;
+        //    f11_T[N_glob_tracks_right] = _poq_data.f11_hit.T;
+
+        //    f13_X[N_glob_tracks_right] = _poq_data.f13_hit.X;
+        //    f13_Y[N_glob_tracks_right] = _poq_data.f13_hit.Y;
+        //    f13_Z[N_glob_tracks_right] = _poq_data.f13_hit.Z;
+        //    f13_Q[N_glob_tracks_right] = _poq_data.f13_hit.Q;
+        //    f13_T[N_glob_tracks_right] = _poq_data.f13_hit.T;
+
+        //    tofd_right_X[N_glob_tracks_right] = _poq_data.dtof_hit.X;
+        //    tofd_right_Y[N_glob_tracks_right] = _poq_data.dtof_hit.Y;
+        //    tofd_right_Z[N_glob_tracks_right] = _poq_data.dtof_hit.Z;
+        //    tofd_right_Q[N_glob_tracks_right] = _poq_data.dtof_hit.Q;
+        //    tofd_right_T[N_glob_tracks_right] = _poq_data.dtof_hit.T;
+
+        //    TX0_mdf_right[N_glob_tracks_right]    = _poq_data.value_tx0;
+        //    TX0_f3_mdf_right[N_glob_tracks_right] = _poq_data.value_tx0_f3;
+        //    PoQ_mdf_right[N_glob_tracks_right]    = _poq_data.value_poq;
+
+        //    X0_residual_right[N_glob_tracks_right]     = _poq_data.x0_res;
+
+        //    TX0_residual_right[N_glob_tracks_right]    = _poq_data.tx0_res;
+        //    TX0_residual_f3_right[N_glob_tracks_right] = _poq_data.tx0_f3_res;
+        //    TX0_residual_mdf_right[N_glob_tracks_right] = _poq_data.tx0_mdf_res;
+
+        //    X0_proj_by_f3_right[N_glob_tracks_right]  = _poq_data.x0_proj_by_f3a;
+        //    TX0_proj_by_f3_right[N_glob_tracks_right] = _poq_data.tx0_f3;
+        //    Xoffset_f3a[N_glob_tracks_right] =
+        //        _poq_data.f3a_hit.Z*(TX0_mdf_right[N_glob_tracks_right]- TX0_proj_by_f3_right[N_glob_tracks_right]) ;
+
+        //    N_glob_tracks_right++;
+        //}//end filling tree variables from filtered data of right arm
+
+        Current = fB;
+        tree_out.Fill();
+    }//end tracker
     return;
-    // store hits in track level
-    //new ((*fTrackItems)[fNofTrackItems++]) R3BTrack(
-    //        track[0], track[1], track[2], track[3], track[4], track[5], charge, 2, chi[0], chi[1], 0);
 }
 
 void R3BTrackS454_MDF::Output1(Double_t track[12], Double_t chi[6])
@@ -1498,46 +1575,6 @@ void R3BTrackS454_MDF::FinishTask()
     cout << "TofD multi: " << counterTofdMulti << endl;
     cout << "Tracker: " << counterTracker << endl;
 
-    //h_X1_vs_TX1_exp->Write();
-    //h_X0_mdf->Write();
-    //h_X0_vs_X0->Write();
-    //h_X0residual->Write();
-    //h_TX0_mdf->Write();
-    //h_PoQ_mdf->Write();
-    //h_PoQ_vs_Q->Write();
-    //h_PoQ_vs_ToF->Write();
-    //h_PoQ1_vs_PoQ2->Write();
-
-    //h_lab_xz->Write();
-    //h_glob_track_mul->Write();
-    //h_glob_track_mul_corr->Write();
-
-    //h_fib3b_tof->Write();
-    //h_fib3b_q->Write();
-    //h_fib10_tof->Write();
-    //h_fib12_tof->Write();
-    //h_fib12_10_tof->Write();
-
-    //h_fib10_q->Write();
-    //h_fib11_q->Write();
-    //h_fib12_q->Write();
-    //h_fib13_q->Write();
-
-    //h_fib10_x->Write();
-    //h_fib11_x->Write();
-    //h_fib12_x->Write();
-    //h_fib13_x->Write();
-
-    //h_tofd7_q->Write();
-    //h_tofd9_q->Write();
-
-    //h_dTOF_X_vs_Xproj->Write();
-    //h_dTOF_XvsY->Write();
-    //h_dTOF_Xresidual->Write();
-    //h_tofd_QvsX->Write();
-    //h_f3b_TX_vs_TX->Write();
-    //h_f3b_TXresidual->Write();
-
     tree_out.Write();
 }
 
@@ -1553,7 +1590,86 @@ void R3BTrackS454_MDF::Detector_Hit::Set_XYZ_det(Double_t _x, Double_t _y, Doubl
     return;
 }
 
-void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double_t* td, Double_t * xd, Double_t * yd, Double_t * zd)
+bool R3BTrackS454_MDF::Same_Track_Right(MDF_Data_PoQ p1, MDF_Data_PoQ p2)
+{
+    bool decision = false;
+    if(p1.f11_hit.X      == p2.f11_hit.X 
+            &&  p1.f13_hit.X  == p2.f13_hit.X
+            &&  p1.dtof_hit.X == p2.dtof_hit.X
+            &&  p1.f3a_hit.X  == p2.f3a_hit.X)
+        decision = true;
+    return decision;
+}
+
+bool R3BTrackS454_MDF::Used_Track_Right(MDF_Data_PoQ p1, MDF_Data_PoQ p2)
+{
+    bool decision = false;
+    if(p1.f11_hit.X      == p2.f11_hit.X 
+            ||  p1.f13_hit.X  == p2.f13_hit.X
+            ||  p1.dtof_hit.X == p2.dtof_hit.X
+            ||  p1.f3a_hit.X  == p2.f3a_hit.X)
+        decision = true;
+    return decision;
+}
+
+bool R3BTrackS454_MDF::Good_Track_Right(MDF_Data_PoQ p1)
+{
+    bool decision = false;
+    if( 
+            fabs(p1.tx0_mdf_res)   < Res_Limit
+            //&& fabs(p1.tx0_res)    < Res_Limit
+            //&& fabs(p1.tx0_f3_res) < Res_Limit
+            && p1.value_tx0 < 0
+            && p1.value_tx0_f3 < 0
+            && p1.tx0_f3 < 0   
+            && p1.x0_proj_by_f3a > -0.4 && p1.x0_proj_by_f3a <0.4
+            && p1.dtof_hit.Q < 8.5
+      )
+        decision = true;
+    return decision;
+}
+
+bool R3BTrackS454_MDF::Same_Track_Left(MDF_Data_PoQ p1, MDF_Data_PoQ p2)
+{
+    bool decision = false;
+    if(p1.f10_hit.X      == p2.f10_hit.X 
+            &&  p1.f12_hit.X  == p2.f12_hit.X
+            &&  p1.dtof_hit.X == p2.dtof_hit.X
+            &&  p1.f3b_hit.X  == p2.f3b_hit.X)
+        decision = true;
+    return decision;
+}
+
+bool R3BTrackS454_MDF::Used_Track_Left(MDF_Data_PoQ p1, MDF_Data_PoQ p2)
+{
+    bool decision = false;
+    if(p1.f10_hit.X      == p2.f10_hit.X 
+            ||  p1.f12_hit.X  == p2.f12_hit.X
+            ||  p1.dtof_hit.X == p2.dtof_hit.X
+            ||  p1.f3b_hit.X  == p2.f3b_hit.X)
+        decision = true;
+    return decision;
+}
+
+
+bool R3BTrackS454_MDF::Good_Track_Left(MDF_Data_PoQ p1)
+{
+    bool decision = false;
+    if( 
+            fabs(p1.tx0_mdf_res)   < Res_Limit
+            && fabs(p1.tx0_res)    < Res_Limit
+            && fabs(p1.tx0_f3_res) < Res_Limit
+            && p1.value_tx0 > 0
+            && p1.value_tx0_f3 > 0
+            && p1.tx0_f3 > 0
+            && p1.x0_proj_by_f3b > -0.4 && p1.x0_proj_by_f3b <0.4
+            && p1.dtof_hit.Q < 8.5
+      )
+        decision = true;
+    return decision;
+}
+
+void R3BTrackS454_MDF::Make_Lab_Coordinates(Int_t detcount, Int_t* det, Double_t* qd, Double_t* td, Double_t * xd, Double_t * yd, Double_t * zd)
 {
     //Make sure that hit containers are empty
     f3a_hits.clear();
@@ -1563,15 +1679,9 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double
     f12_hits.clear();
     f13_hits.clear();
     dtof_hits.clear();
-    //MDF data vectors
-    PoQ_data.clear();
 
     //Temporary containers
     Detector_Hit det_hit;
-    MDF_Data_PoQ PoQ;
-
-    double Xproj=0;
-    bool is_used = false;
 
     //At first convert each detector hit to the lab coordinates (in cm as r3broot)
     for(int i=0; i<detcount; i++)
@@ -1579,7 +1689,7 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double
         if(det[i] == 0) //=========== fi3a
         {
             det_hit.Set_XYZQ(
-                    xd[i]*(-100.) - 0.25 -  f3ab_halfwidth,// 5 mm slit, flipped
+                    xd[i]*(-100.) - 0.25 -  f3ab_halfwidth + 0.3724 + F1113_X0par + F3b_dX,// 5 mm slit, flipped
                     yd[i]*100.,
                     zd[i]+80.5,
                     qd[i], td[i], det[i]);
@@ -1660,114 +1770,189 @@ void R3BTrackS454_MDF::TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double
         else continue;
     }//end of transformation to the lab system
 
-    //============== Start from all combinations in F10 and F12 ====================
-    if(f10_hits.size()==0 || f12_hits.size()==0  || dtof_hits.size()==0
-            || f3b_hits.size()==0) return;
+    return;
+}
 
-    //Check fib12
-    for(auto & _hit_f12 : f12_hits)
+void R3BTrackS454_MDF::Track_MDF(int Tracking_Arm)
+{
+    //MDF data vectors
+    PoQ_data.clear();
+    MDF_Data_PoQ PoQ;
+    double Xproj=0;
+
+    //============== Tracking in the left arm ================== 
+    if(Tracking_Arm==1 && f10_hits.size()>0 && f12_hits.size()>0 && dtof_hits.size()>0 && f3b_hits.size()>0)
     {
-        //Check fib10
-        for(auto & _hit_f10 : f10_hits)
+        for(auto & _hit_f12 : f12_hits)
         {
-            if((_hit_f10.X - _hit_f12.X) < -30 || (_hit_f10.X - _hit_f12.X) > 30
-                    || (_hit_f10.T - _hit_f12.T) < -10 || (_hit_f10.T - _hit_f12.T) > 10
-                    //|| (_hit_f10.Y - _hit_f12.Y) < -40 || (_hit_f10.Y - _hit_f12.Y) > 40
-              ) continue;
-
-            //Check TOFD
-            for(auto & _hit_tofd : dtof_hits)
+            for(auto & _hit_f10 : f10_hits)
             {
-                //Project onto dtof from F10 (last fiber)
-                Xproj = _hit_f10.X + (_hit_tofd.Z - _hit_f10.Z) * (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
-                if(_hit_tofd.Detector==6 || _hit_tofd.Detector==8) continue;
-                if(_hit_tofd.Q>10) continue;
-                if((Xproj -  _hit_tofd.X)>2. || (Xproj -  _hit_tofd.X)<(-2.5)) continue;
-
-                //=============== Next look for coincidences in F3b ==============
-                for(auto & _hit_f3b : f3b_hits)
+                for(auto & _hit_tofd : dtof_hits)
                 {
-                    //========== Reset PoQ object and collect all data ==========
-                    PoQ.is_f3b    = false;
-                    PoQ.is_f3a    = false;
-                    PoQ.is_f10    = false;
-                    PoQ.is_f11    = false;
-                    PoQ.is_f12    = false;
-                    PoQ.is_f13    = false;
-                    PoQ.is_dtof   = false;
-                    PoQ.is_dtof_6 = false;
-                    PoQ.is_dtof_7 = false;
-                    PoQ.is_dtof_8 = false;
-                    PoQ.is_dtof_9 = false;
+                    //Project onto dtof from F10 (last fiber)
+                    Xproj = _hit_f10.X + (_hit_tofd.Z - _hit_f10.Z) * (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
+                    if(_hit_tofd.Detector==6 || _hit_tofd.Detector==8) continue;
+                    if(_hit_tofd.Q>10) continue;
+                    if((Xproj -  _hit_tofd.X)>2. || (Xproj -  _hit_tofd.X)<(-2.5)) continue;
 
-                    //============ Saving data from each detector into the PoQ object
-                    PoQ.f10_hit.Set_XYZQ( _hit_f10.X, _hit_f10.Y, _hit_f10.Z,
-                            _hit_f10.Q, _hit_f10.T, _hit_f10.Detector);
+                    //=============== Next look for coincidences in F3b ==============
+                    for(auto & _hit_f3b : f3b_hits)
+                    {
+                        //========== Reset PoQ object and collect all data ==========
+                        PoQ.is_right_arm    = false;
+                        PoQ.is_left_arm    = false;
 
-                    PoQ.f12_hit.Set_XYZQ( _hit_f12.X, _hit_f12.Y, _hit_f12.Z,
-                            _hit_f12.Q, _hit_f12.T, _hit_f12.Detector);
+                        //============ Saving data from each detector into the PoQ object
+                        PoQ.f10_hit.Set_XYZQ( _hit_f10.X, _hit_f10.Y, _hit_f10.Z,
+                                _hit_f10.Q, _hit_f10.T, _hit_f10.Detector);
 
-                    PoQ.dtof_hit.Set_XYZQ( _hit_tofd.X, _hit_tofd.Y, _hit_tofd.Z,
-                            _hit_tofd.Q, _hit_tofd.T, _hit_tofd.Detector);
+                        PoQ.f12_hit.Set_XYZQ( _hit_f12.X, _hit_f12.Y, _hit_f12.Z,
+                                _hit_f12.Q, _hit_f12.T, _hit_f12.Detector);
 
-                    PoQ.f3b_hit.Set_XYZQ( _hit_f3b.X, _hit_f3b.Y, _hit_f3b.Z,
-                            _hit_f3b.Q, _hit_f3b.T, _hit_f3b.Detector);
+                        PoQ.dtof_hit.Set_XYZQ( _hit_tofd.X, _hit_tofd.Y, _hit_tofd.Z,
+                                _hit_tofd.Q, _hit_tofd.T, _hit_tofd.Detector);
 
-                    //===== Separately saving detector coordinates of the hits =========
-                    PoQ.f10_hit.Set_XYZ_det(_hit_f10.Xdet,  _hit_f10.Ydet,  _hit_f10.Zdet );
-                    PoQ.f12_hit.Set_XYZ_det(_hit_f12.Xdet,  _hit_f12.Ydet,  _hit_f12.Zdet );
-                    PoQ.f3b_hit.Set_XYZ_det(_hit_f3b.Xdet,  _hit_f3b.Ydet,  _hit_f3b.Zdet );
+                        PoQ.f3b_hit.Set_XYZQ( _hit_f3b.X, _hit_f3b.Y, _hit_f3b.Z,
+                                _hit_f3b.Q, _hit_f3b.T, _hit_f3b.Detector);
 
-                    //==== Tracking TX0 angle from the target ========
-                    PoQ.edata_tx0[0] = F1012_X0par;//X0 nominal
-                    PoQ.edata_tx0[1] = 0;//Z0
-                    PoQ.edata_tx0[2] = _hit_f12.X;//X1
-                    PoQ.edata_tx0[3] = _hit_f12.Z;//Z1
-                    PoQ.edata_tx0[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);//TX1
-                    MDF_TX0_targ->X2P(PoQ.edata_tx0, PoQ.pdata_tx0);
-                    PoQ.value_tx0 = MDF_TX0_targ->MDF(PoQ.pdata_tx0);
+                        //===== Separately saving detector coordinates of the hits =========
+                        PoQ.f10_hit.Set_XYZ_det(_hit_f10.Xdet,  _hit_f10.Ydet,  _hit_f10.Zdet );
+                        PoQ.f12_hit.Set_XYZ_det(_hit_f12.Xdet,  _hit_f12.Ydet,  _hit_f12.Zdet );
+                        PoQ.f3b_hit.Set_XYZ_det(_hit_f3b.Xdet,  _hit_f3b.Ydet,  _hit_f3b.Zdet );
 
-                    //==== Tracking TX0 angle from f3b ========
-                    PoQ.edata_tx0_f3[0] = _hit_f3b.X;//X from f3b
-                    PoQ.edata_tx0_f3[1] = _hit_f3b.Z;//Z from f3b
-                    PoQ.edata_tx0_f3[2] = _hit_f12.X;//X1
-                    PoQ.edata_tx0_f3[3] = _hit_f12.Z;//Z1
-                    PoQ.edata_tx0_f3[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);//TX1
-                    MDF_TX0_f3->X2P(PoQ.edata_tx0_f3, PoQ.pdata_tx0_f3);
-                    PoQ.value_tx0_f3 = MDF_TX0_f3->MDF(PoQ.pdata_tx0_f3);
+                        //==== Tracking TX0 angle from the target ========
+                        PoQ.edata_tx0[0] = F1012_X0par;//X0 nominal
+                        PoQ.edata_tx0[1] = 0;//Z0
+                        PoQ.edata_tx0[2] = _hit_f12.X;//X1
+                        PoQ.edata_tx0[3] = _hit_f12.Z;//Z1
+                        PoQ.edata_tx0[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);//TX1
+                        MDF_TX0_targ->X2P(PoQ.edata_tx0, PoQ.pdata_tx0);
+                        PoQ.value_tx0 = MDF_TX0_targ->MDF(PoQ.pdata_tx0);
 
-                    //==== Tracking X0 coordiante (target X position) ========
-                    //PoQ.edata_x0[0] =  (_hit_f3b.X -  F1012_X0par) /  _hit_f3b.Z;//TX0 from fiber 3b
-                    PoQ.edata_x0[0] =  PoQ.value_tx0_f3;//TX0 from fiber 3b MDF
-                    PoQ.edata_x0[1] = _hit_f12.X;
-                    PoQ.edata_x0[2] = _hit_f12.Z;
-                    PoQ.edata_x0[3] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
-                    MDF_X0->X2P(PoQ.edata_x0, PoQ.pdata_x0);
-                    PoQ.value_x0 = MDF_X0->MDF(PoQ.pdata_x0);
+                        //==== Tracking TX0 angle from f3b ========
+                        PoQ.edata_tx0_f3[0] = _hit_f3b.X;//X from f3b
+                        PoQ.edata_tx0_f3[1] = _hit_f3b.Z;//Z from f3b
+                        PoQ.edata_tx0_f3[2] = _hit_f12.X;//X1
+                        PoQ.edata_tx0_f3[3] = _hit_f12.Z;//Z1
+                        PoQ.edata_tx0_f3[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);//TX1
+                        MDF_TX0_f3->X2P(PoQ.edata_tx0_f3, PoQ.pdata_tx0_f3);
+                        PoQ.value_tx0_f3 = MDF_TX0_f3->MDF(PoQ.pdata_tx0_f3);
 
-                    //==== Tracking PoQ from the target ========
-                    PoQ.edata_poq[0] = F1012_X0par;//X0 
-                    PoQ.edata_poq[1] = 0.;//Z0
-                    PoQ.edata_poq[2] = _hit_f12.X;
-                    PoQ.edata_poq[3] = _hit_f12.Z;
-                    PoQ.edata_poq[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
-                    MDF_PoQ->X2P(PoQ.edata_poq, PoQ.pdata_poq);
-                    PoQ.value_poq = MDF_PoQ->MDF(PoQ.pdata_poq) * 1672./1672.;
+                        //==== Tracking PoQ from the target ========
+                        PoQ.edata_poq[0] = F1012_X0par;//X0 
+                        PoQ.edata_poq[1] = 0.;//Z0
+                        PoQ.edata_poq[2] = _hit_f12.X;
+                        PoQ.edata_poq[3] = _hit_f12.Z;
+                        PoQ.edata_poq[4] = (_hit_f10.X -_hit_f12.X)/(_hit_f10.Z - _hit_f12.Z);
+                        MDF_PoQ->X2P(PoQ.edata_poq, PoQ.pdata_poq);
+                        PoQ.value_poq = MDF_PoQ->MDF(PoQ.pdata_poq) * 1672./1672.;
 
-                    PoQ.is_f3b = true;
-                    PoQ.is_f12 = true;
-                    PoQ.is_f10 = true;
-                    PoQ.is_dtof = true;
+                        PoQ.tx0_f3  =(PoQ.f3b_hit.X -  F1012_X0par) / PoQ.f3b_hit.Z;
+                        PoQ.tx0_res = PoQ.value_tx0 - PoQ.tx0_f3;
+                        PoQ.tx0_f3_res = PoQ.value_tx0_f3 - PoQ.tx0_f3;
+                        PoQ.tx0_mdf_res = PoQ.value_tx0_f3 - PoQ.value_tx0;
+                        PoQ.x0_proj_by_f3b =  PoQ.f3b_hit.X - (PoQ.value_tx0_f3 * PoQ.f3b_hit.Z);
+                        PoQ.x0_res =  PoQ.x0_proj_by_f3b - F1012_X0par;
 
-                    PoQ_data.push_back(PoQ);
-                }//end f3b
+                        PoQ.is_left_arm = true;
 
-                break; //using only one coinsident hit with TOFD
+                        if(fabs(PoQ.tx0_mdf_res)<0.1 && PoQ.tx0_f3 < 0.1 && PoQ.tx0_f3>0)
+                        {
+                            PoQ_data.push_back(PoQ);
+                        }
+                    }//end f3b
+                    break; //using only one coincident hit with TOFD
+                }//end tofd
+            }//end f10
+        }//end f12
+    }//endif left arm
 
-            }//end tofd
-        }//end f10
-    }//end f12
+    //============== Second Tracking in the right arm ================== 
+    if(Tracking_Arm==2 && f11_hits.size()>0 && f13_hits.size()>0 && dtof_hits.size()>0 && f3a_hits.size()>0)
+    {
+        for(auto & _hit_f11 : f11_hits)
+        {
+            for(auto & _hit_f13 : f13_hits)
+            {
+                for(auto & _hit_tofd : dtof_hits)
+                {
+                    //Project onto dtof from F13 (last fiber)
+                    if(_hit_tofd.Detector==7 || _hit_tofd.Detector==9) continue;
+                    if(_hit_tofd.Q>10) continue;
+                    Xproj = _hit_f13.X + (_hit_tofd.Z - _hit_f13.Z) * (_hit_f13.X -_hit_f11.X)/(_hit_f13.Z - _hit_f11.Z);
+                    if((Xproj -  _hit_tofd.X)>2. || (Xproj -  _hit_tofd.X)<(-2.5)) continue;
 
+                    //=============== Next look for coincidences in F3a ==============
+                    for(auto & _hit_f3a : f3a_hits)
+                    {
+                        //========== Reset PoQ object and collect all data ==========
+                        PoQ.is_right_arm  = false;
+                        PoQ.is_left_arm  = false;
+
+                        //============ Saving data from each detector into the PoQ object
+                        PoQ.f11_hit.Set_XYZQ( _hit_f11.X, _hit_f11.Y, _hit_f11.Z,
+                                _hit_f11.Q, _hit_f11.T, _hit_f11.Detector);
+
+                        PoQ.f13_hit.Set_XYZQ( _hit_f13.X, _hit_f13.Y, _hit_f13.Z,
+                                _hit_f13.Q, _hit_f13.T, _hit_f13.Detector);
+
+                        PoQ.dtof_hit.Set_XYZQ( _hit_tofd.X, _hit_tofd.Y, _hit_tofd.Z,
+                                _hit_tofd.Q, _hit_tofd.T, _hit_tofd.Detector);
+
+                        PoQ.f3a_hit.Set_XYZQ( _hit_f3a.X, _hit_f3a.Y, _hit_f3a.Z,
+                                _hit_f3a.Q, _hit_f3a.T, _hit_f3a.Detector);
+
+                        //===== Separately saving detector coordinates of the hits =========
+                        PoQ.f11_hit.Set_XYZ_det(_hit_f11.Xdet,  _hit_f11.Ydet,  _hit_f11.Zdet );
+                        PoQ.f13_hit.Set_XYZ_det(_hit_f13.Xdet,  _hit_f13.Ydet,  _hit_f13.Zdet );
+                        PoQ.f3a_hit.Set_XYZ_det(_hit_f3a.Xdet,  _hit_f3a.Ydet,  _hit_f3a.Zdet );
+
+                        //==== Tracking TX0 angle from the target ========
+                        PoQ.edata_tx0[0] = F1113_X0par;//X0 nominal
+                        PoQ.edata_tx0[1] = 0;//Z0
+                        PoQ.edata_tx0[2] = _hit_f11.X;//X1
+                        PoQ.edata_tx0[3] = _hit_f11.Z;//Z1
+                        PoQ.edata_tx0[4] = (_hit_f13.X -_hit_f11.X)/(_hit_f13.Z - _hit_f11.Z);//TX1
+                        MDF_TX0_targ->X2P(PoQ.edata_tx0, PoQ.pdata_tx0);
+                        PoQ.value_tx0 = MDF_TX0_targ->MDF(PoQ.pdata_tx0);
+
+                        //==== Tracking TX0 angle from f3b ========
+                        PoQ.edata_tx0_f3[0] = _hit_f3a.X;//X from f3b
+                        PoQ.edata_tx0_f3[1] = _hit_f3a.Z;//Z from f3b
+                        PoQ.edata_tx0_f3[2] = _hit_f11.X;//X1
+                        PoQ.edata_tx0_f3[3] = _hit_f11.Z;//Z1
+                        PoQ.edata_tx0_f3[4] = (_hit_f13.X -_hit_f11.X)/(_hit_f13.Z - _hit_f11.Z);//TX1
+                        MDF_TX0_f3->X2P(PoQ.edata_tx0_f3, PoQ.pdata_tx0_f3);
+                        PoQ.value_tx0_f3 = MDF_TX0_f3->MDF(PoQ.pdata_tx0_f3);
+
+                        //==== Tracking PoQ from the target ========
+                        PoQ.edata_poq[0] = F1113_X0par;//X0 
+                        PoQ.edata_poq[1] = 0.;//Z0
+                        PoQ.edata_poq[2] = _hit_f11.X;
+                        PoQ.edata_poq[3] = _hit_f11.Z;
+                        PoQ.edata_poq[4] = (_hit_f13.X -_hit_f11.X)/(_hit_f13.Z - _hit_f11.Z);
+                        MDF_PoQ->X2P(PoQ.edata_poq, PoQ.pdata_poq);
+                        PoQ.value_poq = MDF_PoQ->MDF(PoQ.pdata_poq) * 1672./1672.;
+
+                        PoQ.tx0_f3  =(PoQ.f3a_hit.X -  F1113_X0par) / PoQ.f3a_hit.Z;
+                        PoQ.tx0_res = PoQ.value_tx0 - PoQ.tx0_f3;
+                        PoQ.tx0_f3_res = PoQ.value_tx0_f3 - PoQ.tx0_f3;
+                        PoQ.tx0_mdf_res = PoQ.value_tx0_f3 - PoQ.value_tx0;
+                        PoQ.x0_proj_by_f3a =  PoQ.f3a_hit.X - (PoQ.value_tx0_f3 * PoQ.f3a_hit.Z);
+                        PoQ.x0_res =  PoQ.x0_proj_by_f3a - F1113_X0par;
+
+                        PoQ.is_right_arm = true;
+
+                        if(fabs(PoQ.tx0_mdf_res)<0.1 && PoQ.tx0_f3>(-0.1) && PoQ.tx0_f3<0)
+                        {
+                            PoQ_data.push_back(PoQ);
+                        }
+                    }//end f3a
+                    break; //using only one coincident hit with TOFD
+                }//end tofd
+            }//end f13
+        }//end f11
+    }//endif right arm
     return;
 }
 

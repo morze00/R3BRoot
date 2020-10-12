@@ -100,8 +100,9 @@ class R3BTrackS454_MDF : public FairTask
         virtual void Output1(Double_t tracker[6], Double_t chi2[2]);
         virtual void Output2(Double_t tracker[6], Double_t chi2[2]);
 
-        //Main tracking function
-        void TrackMDF(Int_t detcount, Int_t* det, Double_t* qd, Double_t* td, Double_t * xd, Double_t * yd, Double_t * zd);
+        //iConverting data to lab coordinates
+        void Make_Lab_Coordinates(Int_t detcount, Int_t* det, Double_t* qd, Double_t* td, Double_t * xd, Double_t * yd, Double_t * zd);
+        void Track_MDF(int Tracking_Arm);
 
         /**
          * Method for setting the trigger value.
@@ -250,49 +251,6 @@ class R3BTrackS454_MDF : public FairTask
         Int_t ndet = 10;
 
 
-        //Define what is needed for MDF tracking
-
-        TH2F * h_X1_vs_TX1_exp;
-        TH1F * h_X0_mdf;
-        TH2F * h_X0_vs_X0;
-        TH1F * h_X0residual;
-        TH1F * h_TX0_mdf;
-        TH1F * h_PoQ_mdf;
-        TH2F * h_PoQ_vs_ToF;
-        TH2F * h_PoQ_vs_Q;
-        TH2F * h_PoQ1_vs_PoQ2;
-        TH1F * h_glob_track_mul;
-        TH2F * h_glob_track_mul_corr;
-        TH2F * h_lab_xz;
-        TH2F * h_dTOF_XvsY;
-
-        TH2F * h_dTOF_X_vs_Xproj;
-        TH1F * h_dTOF_Xresidual;
-        TH2F * h_f3b_TX_vs_TX;
-        TH1F * h_f3b_TXresidual;
-
-        TH1F * h_fib3b_tof;
-        TH1F * h_fib3b_q;
-        TH1F * h_fib10_tof;
-        TH1F * h_fib12_tof;
-        TH1F * h_fib12_10_tof;
-
-        TH1F * h_fib10_q;
-        TH1F * h_fib11_q;
-        TH1F * h_fib12_q;
-        TH1F * h_fib13_q;
-
-        TH1F * h_fib10_x;
-        TH1F * h_fib11_x;
-        TH1F * h_fib12_x;
-        TH1F * h_fib13_x;
-
-        TH1F * h_tofd9_q;
-        TH1F * h_tofd8_q;
-        TH1F * h_tofd7_q;
-        TH1F * h_tofd6_q;
-        TH2F * h_tofd_QvsX;
-
         R3BMDFWrapper * MDF_X0;
         R3BMDFWrapper * MDF_TX0_targ;
         R3BMDFWrapper * MDF_TX0_f3;
@@ -335,14 +293,19 @@ class R3BTrackS454_MDF : public FairTask
             Double_t edata_tx0_f3[5];//X0, Z0, X1, Z1, TX1
             Double_t pdata_tx0_f3[5];
 
-
-            Double_t edata_x0[4];//TX0, X1, Z1, TX1
-            Double_t pdata_x0[4];
-
+            //MDF values
             Double_t value_poq;
             Double_t value_tx0;
             Double_t value_tx0_f3;
-            Double_t value_x0;
+
+            Double_t tx0_f3;
+            Double_t tx0_mdf_res;
+            Double_t tx0_f3_res;
+            Double_t tx0_res;
+
+            Double_t x0_res;
+            Double_t x0_proj_by_f3b;
+            Double_t x0_proj_by_f3a;
 
             Detector_Hit f3b_hit;
             Detector_Hit f3a_hit;
@@ -352,34 +315,41 @@ class R3BTrackS454_MDF : public FairTask
             Detector_Hit f13_hit;
             Detector_Hit dtof_hit;
 
-            Bool_t is_f3a;
-            Bool_t is_f3b;
-            Bool_t is_f10;
-            Bool_t is_f11;
-            Bool_t is_f12;
-            Bool_t is_f13;
-            Bool_t is_dtof;
-            Bool_t is_dtof_6;
-            Bool_t is_dtof_7;
-            Bool_t is_dtof_8;
-            Bool_t is_dtof_9;
-
+            bool is_right_arm;
+            bool is_left_arm;
         };
 
-
         std::vector<MDF_Data_PoQ> PoQ_data;
+        std::vector<MDF_Data_PoQ> PoQ_data_filtered;
+
+        bool Same_Track_Right(MDF_Data_PoQ p1, MDF_Data_PoQ p2);
+        bool Used_Track_Right(MDF_Data_PoQ p1, MDF_Data_PoQ p2);
+        bool Good_Track_Right(MDF_Data_PoQ p1);
+
+        bool Same_Track_Left(MDF_Data_PoQ p1, MDF_Data_PoQ p2);
+        bool Used_Track_Left(MDF_Data_PoQ p1, MDF_Data_PoQ p2);
+        bool Good_Track_Left(MDF_Data_PoQ p1);
+
+
 
     public:
         //saving track data for tracker alignment
         TTree tree_out;
 
-        UInt_t N_glob_tracks;
+        UInt_t N_glob_tracks_left;
+        UInt_t N_glob_tracks_right;
 
         Float_t f10_X[400];
         Float_t f10_Y[400];
         Float_t f10_Z[400];
         Float_t f10_Q[400];
         Float_t f10_T[400];
+    
+        Float_t f11_X[400];
+        Float_t f11_Y[400];
+        Float_t f11_Z[400];
+        Float_t f11_Q[400];
+        Float_t f11_T[400];
 
         Float_t f12_X[400];
         Float_t f12_Y[400];
@@ -387,30 +357,65 @@ class R3BTrackS454_MDF : public FairTask
         Float_t f12_Q[400];
         Float_t f12_T[400];
 
+        Float_t f13_X[400];
+        Float_t f13_Y[400];
+        Float_t f13_Z[400];
+        Float_t f13_Q[400];
+        Float_t f13_T[400];
+
         Float_t f3b_X[400];
         Float_t f3b_Y[400];
         Float_t f3b_Z[400];
         Float_t f3b_Q[400];
         Float_t f3b_T[400];
 
-        Float_t tofd_X[400];
-        Float_t tofd_Y[400];
-        Float_t tofd_Z[400];
-        Float_t tofd_Q[400];
-        Float_t tofd_T[400];
-        
-        Float_t X0_mdf[400];
-        Float_t TX0_mdf[400];
-        Float_t TX0_f3_mdf[400];
-        Float_t PoQ_mdf[400];
+        Float_t f3a_X[400];
+        Float_t f3a_Y[400];
+        Float_t f3a_Z[400];
+        Float_t f3a_Q[400];
+        Float_t f3a_T[400];
 
-        Float_t X0_residual[400];
-        Float_t TX0_residual[400];
-        Float_t TX0_residual_f3[400];
-        Float_t X0_proj_by_f3b[400];
-        Float_t TX0_proj_by_f3b[400];
+        Float_t tofd_left_X[400];
+        Float_t tofd_left_Y[400];
+        Float_t tofd_left_Z[400];
+        Float_t tofd_left_Q[400];
+        Float_t tofd_left_T[400];
         
+        Float_t tofd_right_X[400];
+        Float_t tofd_right_Y[400];
+        Float_t tofd_right_Z[400];
+        Float_t tofd_right_Q[400];
+        Float_t tofd_right_T[400];
+
+        Float_t TX0_mdf_left[400];
+        Float_t TX0_f3_mdf_left[400];
+        Float_t PoQ_mdf_left[400];
+        Float_t X0_residual_left[400];
+        Float_t TX0_residual_left[400];
+        Float_t TX0_residual_f3_left[400];
+        Float_t TX0_residual_mdf_left[400];
+        Float_t X0_proj_by_f3_left[400];
+        Float_t TX0_proj_by_f3_left[400];
         Float_t Xoffset_f3b[400];
+ 
+        Float_t TX0_mdf_right[400];
+        Float_t TX0_f3_mdf_right[400];
+        Float_t PoQ_mdf_right[400];
+        Float_t X0_residual_right[400];
+        Float_t TX0_residual_right[400];
+        Float_t TX0_residual_mdf_right[400];
+        Float_t TX0_residual_f3_right[400];
+        Float_t X0_proj_by_f3_right[400];
+        Float_t TX0_proj_by_f3_right[400];
+        Float_t Xoffset_f3a[400];
+
+        UInt_t Nhits_f3a;
+        UInt_t Nhits_f3b;
+        UInt_t Nhits_f10;
+        UInt_t Nhits_f11;
+        UInt_t Nhits_f12;
+        UInt_t Nhits_f13;
+        UInt_t Nhits_tofd;
 
         Int_t Current;
 
@@ -436,6 +441,8 @@ class R3BTrackS454_MDF : public FairTask
 
         //Alignment offset of f3b
         const double F3b_dX  =  -0.253;
+
+        const double Res_Limit = 0.003;
 
     public:
         ClassDef(R3BTrackS454_MDF, 1)
