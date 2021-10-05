@@ -41,6 +41,7 @@ class R3BModule : public FairModule
     /** Construct geometry from root files */
     virtual void ConstructGeometry();     // override;
     virtual void ConstructRootGeometry(); // override;
+    virtual void ConstructGDMLGeometry(); // override;
 
     /** Method to setup the position of the detector-origin. */
     virtual void SetPosition(const TGeoTranslation& trans) { fCombiTrans.SetTranslation(trans); }
@@ -51,7 +52,7 @@ class R3BModule : public FairModule
   protected:
     TGeoCombiTrans fCombiTrans;
 
-    ClassDef(R3BModule, 3)
+    ClassDef(R3BModule, 4)
     // ClassDefOverride(R3BModule, 3)
 };
 

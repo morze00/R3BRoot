@@ -48,11 +48,20 @@ R3BModule::R3BModule(const TString& name,
 
 void R3BModule::ConstructGeometry()
 {
-    if (!GetGeometryFileName().EndsWith(".root"))
+    if(GetGeometryFileName().EndsWith(".root") )
+    {
+      ConstructRootGeometry();
+    }
+
+    else if(GetGeometryFileName().EndsWith(".gdml") )
+    {
+       ConstructGDMLGeometry();  
+    }
+
+    else
     {
         LOG(FATAL) << GetName() << " (which is a " << ClassName() << ") geometry file is not specified!";
     }
-    ConstructRootGeometry();
 }
 
 void R3BModule::ConstructRootGeometry()
@@ -66,6 +75,22 @@ void R3BModule::ConstructRootGeometry()
         auto n = gGeoManager->GetTopNode()->GetDaughter(gGeoManager->GetTopNode()->GetNdaughters() - 1);
         ((TGeoNodeMatrix*)n)->SetMatrix(fCombiTrans.MakeClone());
     }
+}
+
+void R3BModule::ConstructGDMLGeometry()
+{
+    LOG(INFO) << "R3BModule: Constructing " << GetName() << " (which is a " << ClassName()
+        << ") geometry from GDML file " << GetGeometryFileName() << " ...";
+
+    FairModule::ConstructGDMLGeometry(dynamic_cast<TGeoMatrix*>(fCombiTrans.Clone()));
+
+    if (!fCombiTrans.IsIdentity())
+    {
+        auto n = gGeoManager->GetTopNode()->GetDaughter(gGeoManager->GetTopNode()->GetNdaughters() - 1);
+        ((TGeoNodeMatrix*)n)->SetMatrix(fCombiTrans.MakeClone());
+    }
+    
+
 }
 
 ClassImp(R3BModule)
