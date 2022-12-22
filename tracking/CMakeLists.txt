@@ -57,6 +57,7 @@ R3BTrackingParticle.cxx
 R3BTrackingSetup.cxx
 R3BMDFWrapper.cxx
 R3BTrackingS515.cxx
+R3BTrackingS522.cxx
 )
 
 # fill list of header files from list of source files
