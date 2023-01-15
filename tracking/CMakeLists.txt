@@ -34,6 +34,7 @@ ${R3BROOT_SOURCE_DIR}/r3bdata/mwpcData
 ${R3BROOT_SOURCE_DIR}/r3bdata/frsData
 ${R3BROOT_SOURCE_DIR}/r3bdata/musicData
 ${R3BROOT_SOURCE_DIR}/r3bdata/losData
+${R3BROOT_SOURCE_DIR}/r3bdata/footData
 )
 
 include_directories( ${INCLUDE_DIRECTORIES})
