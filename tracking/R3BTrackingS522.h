@@ -152,6 +152,10 @@ class R3BTrackingS522 : public FairTask
         double f1_z;
         double f2_y;
         double f2_z;
+        double f15_x;
+        double f15_z;
+        double f16_y;
+        double f16_z;
         double tx0;
         double ty0;
         double f32_x;
@@ -179,8 +183,8 @@ class R3BTrackingS522 : public FairTask
     bool MakeOutgoingTracks();
 
   private:
-    //-- Input hit data from the TClonesArray
-    //-- do not change the order, add new det in the end
+    // Input hit data from the TClonesArray
+    // do not change the order, add new det in the end
     enum DetectorInstances
     {
         DET_FI_FIRST,
@@ -193,6 +197,7 @@ class R3BTrackingS522 : public FairTask
         FOOT_HITDATA,
         MWPC0_HITDATA,
         MWPC1_HITDATA,
+        FRS_DATA,
         DET_MAX
     };
 
@@ -201,11 +206,13 @@ class R3BTrackingS522 : public FairTask
     // Names of essential branches in the input tree
     // do not change the order! add new data in the end
     const char* fDetectorNames[DET_MAX + 1] = { "Fi30Hit", "Fi31Hit", "Fi32Hit", "Fi33Hit",
-        "TofdHit", "FootHitData", "Mwpc0HitData", "Mwpc1HitData", NULL };
+        "TofdHit", "FootHitData", "Mwpc0HitData", "Mwpc1HitData", "FrsData", NULL };
 
     R3BEventHeader* fHeader;
     std::vector<TClonesArray*> fDataItems; // input data
     TClonesArray* fTrackItems;             // output data
+
+    bool is_good_event;
 
     TRotation r;
     TVector3 v3_localX;
@@ -276,7 +283,7 @@ class R3BTrackingS522 : public FairTask
     UInt_t N_glob_tracks;
     UInt_t N_in_tracks;
     UInt_t N_out_tracks;
-    static constexpr UInt_t N_glob_tracks_max = 2000;
+    static constexpr UInt_t N_glob_tracks_max = 100000;
     UInt_t mul_m0;
     UInt_t mul_m1;
     UInt_t mul_f1;
