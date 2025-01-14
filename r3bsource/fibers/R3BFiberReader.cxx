@@ -50,6 +50,8 @@ extern "C"
 #include "ext_h101_fibthreea.h"
 #include "ext_h101_fibthreeb.h"
 #include "ext_h101_fibtwelve.h"
+#include "ext_h101_fib40.h"
+#include "ext_h101_fib41.h"
 }
 
 R3BFiberReader::R3BFiberReader(char const* a_name, UInt_t fiber_num, EXT_STR_h101_FIBZEA_onion* data, size_t offset)
@@ -276,6 +278,30 @@ R3BFiberReader::R3BFiberReader(char const* a_name, UInt_t fiber_num, EXT_STR_h10
 {
 }
 
+R3BFiberReader::R3BFiberReader(char const* a_name, UInt_t fiber_num, EXT_STR_h101_FIBFOURTY_onion* data, size_t offset)
+    : R3BReader(TString("R3B") + a_name + "Reader")
+    , fData40(data)
+    , fOffset(offset)
+    , fShortName(a_name)
+    , fFiberNum(fiber_num)
+    , fDataSPMTTrig(NULL)
+    , fMappedArray(new TClonesArray("R3BFiberMappedData"))
+    , fOnline(kFALSE)
+{
+}
+
+R3BFiberReader::R3BFiberReader(char const* a_name, UInt_t fiber_num, EXT_STR_h101_FIBFOURTYONE_onion* data, size_t offset)
+    : R3BReader(TString("R3B") + a_name + "Reader")
+    , fData41(data)
+    , fOffset(offset)
+    , fShortName(a_name)
+    , fFiberNum(fiber_num)
+    , fDataSPMTTrig(NULL)
+    , fMappedArray(new TClonesArray("R3BFiberMappedData"))
+    , fOnline(kFALSE)
+{
+}
+
 void R3BFiberReader::SetUcesbSPMTTrigStructure(EXT_STR_h101_FIB_onion* data, size_t offset)
 {
     fDataSPMTTrig = data;
@@ -348,6 +374,14 @@ Bool_t R3BFiberReader::Init(ext_data_struct_info* a_struct_info)
     else if (fShortName == "Fi33")
     {
         R3B_MAPMT_INIT_TRIG(FIBEE, fData33);
+    }
+    else if (fShortName == "Fi40")
+    {
+        R3B_MAPMT_INIT_TRIG_TRAIL(FIBFOURTY, fData40);
+    }
+    else if (fShortName == "Fi41")
+    {
+        R3B_MAPMT_INIT_TRIG_TRAIL(FIBFOURTYONE, fData41);
     }
 
     if (fShortName == "Fi3a" || fShortName == "Fi3b" || fShortName == "Fi7" || fShortName == "Fi8" ||

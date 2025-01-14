@@ -91,6 +91,16 @@ struct EXT_STR_h101_FIB_t;
 typedef struct EXT_STR_h101_FIB_t EXT_STR_h101_FIB;
 typedef struct EXT_STR_h101_FIB_onion_t EXT_STR_h101_FIB_onion;
 
+struct EXT_STR_h101_FIBFOURTY_t;
+typedef struct EXT_STR_h101_FIBFOURTY_t EXT_STR_h101_FIBFOURTY;
+typedef struct EXT_STR_h101_FIBFOURTY_onion_t EXT_STR_h101_FIBFOURTY_onion;
+
+struct EXT_STR_h101_FIBFOURTYONE_t;
+typedef struct EXT_STR_h101_FIBFOURTYONE_t EXT_STR_h101_FIBFOURTYONE;
+typedef struct EXT_STR_h101_FIBFOURTYONE_onion_t EXT_STR_h101_FIBFOURTYONE_onion;
+
+
+
 class ext_data_struct_info;
 
 #define R3BBUNCHED_FIBER_INIT_BEGIN_(NAME)                                                 \
@@ -162,6 +172,27 @@ class ext_data_struct_info;
         R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[2][0][1], data->NAME##_TRIGF); \
     } while (0)
 
+//same as previous but added trigger trailing edges (first implemented for fib 40 and 41)
+#define R3B_MAPMT_INIT_TRIG_TRAIL(NAME, data)                                   \
+    do                                                                    \
+    {                                                                     \
+        R3BBUNCHED_FIBER_INIT_BEGIN_(NAME);                               \
+        memset(data, 0, sizeof *data);                                    \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[0][0][0], data->NAME##_TBLC);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[0][0][1], data->NAME##_TBLF);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[0][1][0], data->NAME##_TBTC);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[0][1][1], data->NAME##_TBTF);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[1][0][0], data->NAME##_TTLC);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[1][0][1], data->NAME##_TTLF);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[1][1][0], data->NAME##_TTTC);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[1][1][1], data->NAME##_TTTF);  \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[2][0][0], data->NAME##_TRIGLC); \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[2][0][1], data->NAME##_TRIGLF); \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[2][1][0], data->NAME##_TRIGTC); \
+        R3B_FIBER_UCESB_LINK_MULTIHIT(fMHL[2][1][1], data->NAME##_TRIGTF); \
+    } while (0)
+
+
 #define R3B_FIBER_UCESB_LINK(dst, src)                      \
     do                                                      \
     {                                                       \
@@ -226,6 +257,8 @@ class R3BFiberReader : public R3BReader
     R3BFiberReader(char const*, UInt_t, EXT_STR_h101_FIBEI_onion*, size_t);
     R3BFiberReader(char const*, UInt_t, EXT_STR_h101_FIBEZ_onion*, size_t);
     R3BFiberReader(char const*, UInt_t, EXT_STR_h101_FIBEE_onion*, size_t);
+    R3BFiberReader(char const*, UInt_t, EXT_STR_h101_FIBFOURTY_onion*, size_t);
+    R3BFiberReader(char const*, UInt_t, EXT_STR_h101_FIBFOURTYONE_onion*, size_t);
 
     // Function to set up the ucesb data structure of SPMT trigger info
     void SetUcesbSPMTTrigStructure(EXT_STR_h101_FIB_onion*, size_t);
@@ -267,6 +300,8 @@ class R3BFiberReader : public R3BReader
     EXT_STR_h101_FIBEI_onion* fData31;
     EXT_STR_h101_FIBEZ_onion* fData32;
     EXT_STR_h101_FIBEE_onion* fData33;
+    EXT_STR_h101_FIBFOURTY_onion* fData40;
+    EXT_STR_h101_FIBFOURTYONE_onion* fData41;
     // Reader specific data structure for SPMT trigger info
     // Only for fibers 10, 11, 12 and 13
     EXT_STR_h101_FIB_onion* fDataSPMTTrig;
