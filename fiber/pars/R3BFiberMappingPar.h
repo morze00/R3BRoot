@@ -34,7 +34,8 @@ class R3BFiberMappingPar : public FairParGenericSet
     /** Standard constructor **/
     R3BFiberMappingPar(const TString& name = "fiberMappingPar",
                        const TString& title = "Fiber Mapping parameters",
-                       const TString& context = "fiberMappingContext");
+                       const TString& context = "fiberMappingContext",
+                       Int_t nChannels = 512);
 
     /** Destructor **/
     virtual ~R3BFiberMappingPar();

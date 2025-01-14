@@ -25,10 +25,10 @@
 #include "TString.h"
 
 // ---- Standard Constructor ---------------------------------------------------
-R3BFiberMappingPar::R3BFiberMappingPar(const TString& name, const TString& title, const TString& context)
+R3BFiberMappingPar::R3BFiberMappingPar(const TString& name, const TString& title, const TString& context, Int_t nChannels)
     : FairParGenericSet(name, title, context)
     , fNbSides(2)
-    , fNbChannels(512)
+    , fNbChannels(nChannels)
 {
     for (Int_t s = 0; s < fNbSides; s++)
     {

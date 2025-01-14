@@ -109,6 +109,8 @@
 #pragma link C++ class EXT_STR_h101_FIBEI_onion_t;
 #pragma link C++ class EXT_STR_h101_FIBEZ_onion_t;
 #pragma link C++ class EXT_STR_h101_FIBEE_onion_t;
+#pragma link C++ class EXT_STR_h101_FIBFOURTY_onion_t;
+#pragma link C++ class EXT_STR_h101_FIBFOURTYONE_onion_t;
 #pragma link C++ class EXT_STR_h101_SCI2_onion_t;
 #pragma link C++ class EXT_STR_h101_SCI8_onion_t;
 #pragma link C++ class EXT_STR_h101_ROLU_onion_t;

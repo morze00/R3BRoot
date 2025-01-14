@@ -151,6 +151,8 @@ set(STRUCT_HEADERS
     fibers/ext_h101_fib31.h
     fibers/ext_h101_fib32.h
     fibers/ext_h101_fib33.h
+    fibers/ext_h101_fib40.h
+    fibers/ext_h101_fib41.h
     los/ext_h101_los_dez19.h
     rolu/ext_h101_rolu.h
     rolu/ext_h101_rolu_online.h

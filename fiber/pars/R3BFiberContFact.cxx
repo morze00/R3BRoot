@@ -190,6 +190,32 @@ void R3BFiberContFact::setAllContainers()
     auto p36 = new FairContainer("Fi8GeoPar", "Fi8 geometry parameters", "fi8GeoContext");
     p36->addContext("fi8GeoContext");
     containers->Add(p36);
+
+    //Params for fib 40 anf 41
+    auto p37 = new FairContainer("Fi40GeoPar", "Fi40 geometry parameters", "fi40GeoContext");
+    p37->addContext("fi40GeoContext");
+    containers->Add(p37);
+    
+    auto p38 = new FairContainer("Fi41GeoPar", "Fi41 geometry parameters", "fi41GeoContext");
+    p38->addContext("fi41GeoContext");
+    containers->Add(p38);
+
+    auto p39 = new FairContainer("Fi40MappingPar", "Fi40 Mapping Parameters", "TestDefaultContext");
+    p39->addContext("TestNonDefaultContext");
+    containers->Add(p39);
+
+    auto p40 = new FairContainer("Fi41MappingPar", "Fi41 Mapping Parameters", "TestDefaultContext");
+    p40->addContext("TestNonDefaultContext");
+    containers->Add(p40);
+
+    auto p41 = new FairContainer("Fi40HitPar", "Fi40 Hit Parameters", "TestDefaultContext");
+    p41->addContext("TestNonDefaultContext");
+    containers->Add(p41);
+    
+    auto p42 = new FairContainer("Fi41HitPar", "Fi41 Hit Parameters", "TestDefaultContext");
+    p42->addContext("TestNonDefaultContext");
+    containers->Add(p42);
+
 }
 
 FairParSet* R3BFiberContFact::createContainer(FairContainer* c)
@@ -205,7 +231,8 @@ FairParSet* R3BFiberContFact::createContainer(FairContainer* c)
     if (strcmp(name, "Fi7GeoPar") == 0 || strcmp(name, "Fi8GeoPar") == 0 || strcmp(name, "Fi10GeoPar") == 0 ||
         strcmp(name, "Fi11GeoPar") == 0 || strcmp(name, "Fi12GeoPar") == 0 || strcmp(name, "Fi13GeoPar") == 0 ||
         strcmp(name, "Fi23aGeoPar") == 0 || strcmp(name, "Fi23bGeoPar") == 0 || strcmp(name, "Fi30GeoPar") == 0 ||
-        strcmp(name, "Fi31GeoPar") == 0 || strcmp(name, "Fi32GeoPar") == 0 || strcmp(name, "Fi33GeoPar") == 0)
+        strcmp(name, "Fi31GeoPar") == 0 || strcmp(name, "Fi32GeoPar") == 0 || strcmp(name, "Fi33GeoPar") == 0 || 
+        strcmp(name, "Fi41GeoPar") == 0 || strcmp(name, "Fi42GeoPar") == 0)
     {
         p = new R3BTGeoPar(c->getConcatName().Data(), c->GetTitle(), c->getContext());
     }
@@ -217,8 +244,15 @@ FairParSet* R3BFiberContFact::createContainer(FairContainer* c)
     {
         p = new R3BFiberMappingPar(c->getConcatName().Data(), c->GetTitle(), c->getContext());
     }
+
+    else if (strcmp(name, "Fi40MappingPar") == 0 || strcmp(name, "Fi41MappingPar") == 0)
+    {
+        p = new R3BFiberMappingPar(c->getConcatName().Data(), c->GetTitle(), c->getContext(), 1032);
+    }
+
     else if (strcmp(name, "Fi30HitPar") == 0 || strcmp(name, "Fi31HitPar") == 0 || strcmp(name, "Fi32HitPar") == 0 ||
-             strcmp(name, "Fi33HitPar") == 0 || strcmp(name, "Fi23aHitPar") == 0 || strcmp(name, "Fi23bHitPar") == 0)
+             strcmp(name, "Fi33HitPar") == 0 || strcmp(name, "Fi23aHitPar") == 0 || strcmp(name, "Fi23bHitPar") == 0 ||
+             strcmp(name, "Fi40HitPar") == 0 || strcmp(name, "Fi41HitPar") == 0)
     {
         p = new R3BFiberMAPMTHitPar(c->getConcatName().Data(), c->GetTitle(), c->getContext());
     }
