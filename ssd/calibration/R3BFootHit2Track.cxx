@@ -213,7 +213,8 @@ void R3BFootHit2Track::Exec(Option_t* /*option*/)
             break; // Make sure all 8 detectors are present
         }
         count_foots++;
-        (detId > 4 ? out_particle : in_particle).AddHit("foot" + std::to_string(detId), maxHitTCAIndex[detId]);
+        //(detId > 4 ? out_particle : in_particle).AddHit("foot" + std::to_string(detId), maxHitTCAIndex[detId]);
+        (detId > 4 ? out_particle : in_particle).AddHit("foot" + std::to_string(detId), it->second);
     }
     if (count_foots != 8)
     {
