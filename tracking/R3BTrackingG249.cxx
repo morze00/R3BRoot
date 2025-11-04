@@ -268,7 +268,16 @@ void R3BTrackingG249::Exec(Option_t* /*option*/)
     // Check if the event is within FRS cut
     if (FrsCutMeanZ > 0 && FrsCutMeanAoZ > 0 && !IsInsideFrsEllipticPIDCut(frsZ, frsAoQ))
         return;
+  
+    //------------- Get incoming and outgoing tracks in FOOTs ----------
+    auto in_foot_track = dynamic_cast<R3BTrackingParticle*>(foot_incoming_tracks->At(0));
+    auto out_foot_track = dynamic_cast<R3BTrackingParticle*>(foot_outgoing_tracks->At(0));
+    if (!in_foot_track || !out_foot_track)
+        return;
 
+    // This one will be stored into the output tree:
+    R3BTrackingParticle global_track = *out_foot_track;
+    
     //-------------- Reading TOFD data ------------
     R3BTofdHitData* tofd_hit = nullptr;
     bool is_good_tofd = false;
@@ -279,6 +288,7 @@ void R3BTrackingG249::Exec(Option_t* /*option*/)
         if (tofd_hit->GetDetId() == 1) // only hits from first plane
         {
             is_good_tofd = true;
+            global_track.AddHit("tofd",i);
             break;
         }
     }
@@ -290,15 +300,6 @@ void R3BTrackingG249::Exec(Option_t* /*option*/)
         (tofd_hit->GetEloss() < TofdEnergyMin || tofd_hit->GetEloss() > TofdEnergyMax))
         return;
 
-    //------------- Get incoming and outgoing tracks in FOOTs ----------
-    auto in_foot_track = dynamic_cast<R3BTrackingParticle*>(foot_incoming_tracks->At(0));
-    auto out_foot_track = dynamic_cast<R3BTrackingParticle*>(foot_outgoing_tracks->At(0));
-    if (!in_foot_track || !out_foot_track)
-        return;
-
-    // This one will be stored into the output tree:
-    R3BTrackingParticle global_track = *out_foot_track;
-
     if (DoAlignment)
     {
         track_for_alignment.foot_track = *out_foot_track;
@@ -307,6 +308,20 @@ void R3BTrackingG249::Exec(Option_t* /*option*/)
     Collect_FiberHits();
     if (!Construct_FiberTrack() || DoAlignment)
         return;
+    
+    // Store fiber TCA indexes in the global track
+    auto it_f32 = maxHitTCAIndex.find(DET_FI32);
+    auto it_f30 = maxHitTCAIndex.find(DET_FI30);
+    auto it_f33 = maxHitTCAIndex.find(DET_FI33);
+    auto it_f31 = maxHitTCAIndex.find(DET_FI31);
+
+    global_track.AddHit("fib32",it_f32->second);
+    global_track.AddHit("fib30",it_f30->second);
+
+    if(fiber_track.last_fiber == "Fib33" )
+        global_track.AddHit("fib33",it_f33->second);
+    else
+        global_track.AddHit("fib31",it_f31->second);
 
     h2_lab_XZ->Fill(out_foot_track->GetStartPosition().Z() * 0.1, out_foot_track->GetStartPosition().X() * 0.1);
     h2_lab_XZ->Fill(fiber_track.f1.Z(), fiber_track.f1.X());
@@ -359,7 +374,7 @@ void R3BTrackingG249::Collect_FiberHits()
             auto fiber_time = fiber_hit->GetTime();
             // Energy window
             if (FiberEnergyMin > 0 && FiberEnergyMax > 0 &&
-                (fiber_energy < FiberEnergyMin || fiber_energy > FiberEnergyMax))
+                    (fiber_energy < FiberEnergyMin || fiber_energy > FiberEnergyMax))
                 continue;
             // Time window
             if (FiberTimeMin != FiberTimeMax && (fiber_time < FiberTimeMin || fiber_time > FiberTimeMax))
