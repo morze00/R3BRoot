@@ -88,6 +88,8 @@ R3BTrackingG249::~R3BTrackingG249()
 {
     if (MDF_PoQ)
         delete MDF_PoQ;
+    if (MDF_FlightPath)
+        delete MDF_FlightPath;
 }
 
 // Check if all inputs parameters and cuts are properly set in the steering  macros
@@ -128,6 +130,15 @@ InitStatus R3BTrackingG249::Init()
     // Initializing all MDF functions
     R3BLOG(info, "Reading MDF function for PoQ");
     MDF_PoQ = new R3BMDFWrapper(MDF_PoQ_filename.Data());
+
+    R3BLOG(info, "Reading MDF function for Flight Path");
+    MDF_FlightPath = new R3BMDFWrapper(MDF_FlightPath_filename.Data());
+
+    R3BLOG(info, "Reading MDF function for TX1");
+    MDF_TX1 = new R3BMDFWrapper(MDF_TX1_filename.Data());
+
+    R3BLOG(info, "Reading MDF function for TX1");
+    MDF_TY1 = new R3BMDFWrapper(MDF_TY1_filename.Data());
 
     // Declare output TClonesArray
     fTrackItems = new TClonesArray("R3BTrackingParticle");
@@ -346,7 +357,33 @@ void R3BTrackingG249::Exec(Option_t* /*option*/)
     mdf_data[++k] = (fiber_track.f2.Y() - start_Y) / (fiber_track.f2.Z() - start_Z);
 
     Double_t PoQ = MDF_PoQ->MDF(mdf_data) * GladCurrent / GladReferenceCurrent;
+
     Double_t AoZ = PoQ / frsBeta / frsGamma / AMU;
+
+    Double_t FlightPath = MDF_FlightPath->MDF(mdf_data);//from foot5 to first fiber 32
+    Double_t TX1 = MDF_TX1->MDF(mdf_data);
+    Double_t TY1 = MDF_TY1->MDF(mdf_data);
+    
+    //Now calculate the remaining path from F32 to TOFD
+    R3BTrackingParticle dummy_track;     
+    TVector3 out_momentum(TX1, TY1, 1);
+    out_momentum.SetMag(PoQ);
+    TVector3 fib32_point(fiber_track.f1.X(), fiber_track.f2.Y(), fiber_track.f1.Z() );
+
+    dummy_track.SetStartPosition(fib32_point);
+    dummy_track.SetStartMomentum(out_momentum);
+
+    TVector3 tofd_point;
+    if(!PropagateParticleToTofd(dummy_track, tofd_point))
+    {
+        R3BLOG(warning, "ERROR: cannot propagate particle to TOFD");
+        return;
+    }
+
+    TVector3 vector_f32_to_tofd = tofd_point - fib32_point;
+    double extra_flight_path = vector_f32_to_tofd.Mag();
+   
+    FlightPath += extra_flight_path;
 
     // Configure the global track and store it
     TVector3 fragment_momentum = global_track.GetStartMomentum();
@@ -355,10 +392,27 @@ void R3BTrackingG249::Exec(Option_t* /*option*/)
     global_track.SetCharge(tofd_hit->GetEloss());
     global_track.SetMass(AoZ);
     global_track.SetBeta(frsBeta);
+    global_track.AddStep(FlightPath);
     AddTrackData(global_track);
     return;
 }
 
+bool R3BTrackingG249::PropagateParticleToTofd(R3BTrackingParticle &part, TVector3& intersect)
+{
+    TVector3 pos = part.GetStartPosition();
+    TVector3 dir = part.GetStartMomentum().Unit();
+
+    Double_t denom = dir.Dot(detector_planes.back().norm);
+    if (denom == 0)
+        return kFALSE;
+
+    const Double_t t = (detector_planes.back().v1 - pos).Dot(detector_planes.back().norm) / denom;
+    if (t < 0)
+        return kFALSE;
+
+    intersect = pos + t * dir; // intersection point of the paricle with the detector plane in the lab frome
+    return kTRUE;
+}
 void R3BTrackingG249::Collect_FiberHits()
 {
     //------------- Get Fiber Hits - only highest energy hit in every detector --------
@@ -497,35 +551,36 @@ void R3BTrackingG249::MakeDetectorPlanes()
 {
     detector_planes.clear();
     // Define and store detector planes
+    TVector3 pos;
+    TVector3 rot;
+    TString det_name;
+
     for (auto f = 0; f < NOF_FIB_DET; ++f)
     {
-        TVector3 pos;
-        TVector3 rot;
-        TString det_name;
         switch (f)
         {
             case DET_FI32:
                 rot = f32_angles;
                 pos = f32_position;
-                det_name = "Fib32";
+                det_name = "fib32";
                 break;
 
             case DET_FI30:
                 rot = f30_angles;
                 pos = f30_position;
-                det_name = "Fib30";
+                det_name = "fib30";
                 break;
 
             case DET_FI33:
                 rot = f33_angles;
                 pos = f33_position;
-                det_name = "Fib33";
+                det_name = "fib33";
                 break;
 
             case DET_FI31:
                 rot = f31_angles;
                 pos = f31_position;
-                det_name = "Fib31";
+                det_name = "fib31";
                 break;
 
             default:
@@ -546,6 +601,24 @@ void R3BTrackingG249::MakeDetectorPlanes()
         det_plane.name = det_name;
         detector_planes.push_back(det_plane);
     }
+
+    //Now for tofd plane
+    rot = tofd_angles;
+    pos = tofd_position;
+    det_name = "tofd";
+
+    DetectorPlane tofd_plane;
+    tofd_plane.v1.SetXYZ(0, 0, 0);
+    tofd_plane.v2.SetXYZ(1, 0, 0);
+    tofd_plane.v3.SetXYZ(0, 1, 0);
+    TransformPoint("Det2Lab", tofd_plane.v1, &rot, &pos);
+    TransformPoint("Det2Lab", tofd_plane.v2, &rot, &pos);
+    TransformPoint("Det2Lab", tofd_plane.v3, &rot, &pos);
+    tofd_plane.norm = (tofd_plane.v2 - tofd_plane.v1).Cross(tofd_plane.v3 - tofd_plane.v1);
+    tofd_plane.position = pos;
+    tofd_plane.rotation = rot;
+    tofd_plane.name = det_name;
+    detector_planes.push_back(tofd_plane);
 }
 
 R3BTrackingParticle* R3BTrackingG249::AddTrackData(const R3BTrackingParticle& particle)
@@ -609,7 +682,7 @@ void R3BTrackingG249::Alignment()
         for (i = 0; i < NVarsFunctor; ++i) // check proximity to the limits
         {
             if (fabs((xs[i] - min_offset[i]) / min_offset[i]) < 0.1 ||
-                fabs((max_offset[i] - xs[i]) / max_offset[i]) < 0.1)
+                    fabs((max_offset[i] - xs[i]) / max_offset[i]) < 0.1)
                 break;
         }
         if (i != NVarsFunctor)

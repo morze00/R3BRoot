@@ -55,6 +55,10 @@ class R3BTrackingG249 : public FairTask
 
     // Set MDF functions from the steering macro
     void Set_MDF_PoQ(TString name) { MDF_PoQ_filename = name; }
+    void Set_MDF_FlightPath(TString name) { MDF_FlightPath_filename = name; }
+    void Set_MDF_TX1(TString name) { MDF_TX1_filename = name; }
+    void Set_MDF_TY1(TString name) { MDF_TY1_filename = name; }
+
     void SetTrigger(Int_t trigger) { fTrigger = trigger; }
     void SetTpat(Int_t tpat) { fTpat = tpat; }
     void SetMaxEvent(Int_t nev) { maxevent = nev; }
@@ -97,6 +101,7 @@ class R3BTrackingG249 : public FairTask
     void MakeDetectorPlanes();
     void Reset();
     void FixupFiberTrack();
+    bool PropagateParticleToTofd(R3BTrackingParticle &part, TVector3& intersect);
     // Transforming input detector hit(point) from lab->det or det->lab via flag = "Det2Lab" or "Lab2Det"
     void TransformPoint(TString flag, TVector3& hit_point, TVector3* rotation, TVector3* det_offset);
     bool MacroParametersAreOk();
@@ -232,7 +237,13 @@ class R3BTrackingG249 : public FairTask
 
     // Input MDF functions
     R3BMDFWrapper* MDF_PoQ;
+    R3BMDFWrapper* MDF_FlightPath;
+    R3BMDFWrapper* MDF_TX1;
+    R3BMDFWrapper* MDF_TY1;
     TString MDF_PoQ_filename;
+    TString MDF_FlightPath_filename;
+    TString MDF_TX1_filename;
+    TString MDF_TY1_filename;
 
     Double_t mdf_data[9]; // data container for the MDF function
 
